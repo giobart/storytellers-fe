@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    {% include 'html_components/bootstrap.html' %}
+    <link href="/static/css/story.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <!--Navigation bar-->
+    {% include 'html_components/nav.html' %}
+    <!--end of Navigation bar-->
+    <div class="container-fluid">
+    <div class="row">
+
+    </div>
+
+        <div class="jumbotron  bg-white" id="story-container">
+
+            {% if stories != []: %}
+                <div class="row flex-column-reverse flex-md-row">
+
+                    <!-- -------------- STORY LIST ------------- -->
+                    <div class="col-sm-6">
+
+                        <h2>Your Stories</h2>
+                        <hr class="style1">
+                        <br>
+                        {% for story in stories %}
+                            <div>
+                                <ul class="list-group">
+                                    {% if story.is_draft %}
+                                        {% include 'html_components/story_draft_template.html' %}
+                                    {% else %}
+                                        {% include 'html_components/story_template.html' %}
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- -------------- STATISTICS------------- -->
+
+                    <div class="col-sm-6">
+
+                            <h2>Your Statistics</h2>
+                            <hr class="style1">
+                            <br>
+                            <div class="alert alert-primary" role="alert">
+                                You are an  user, since you
+                                 post a story in the last seven days
+                            </div>
+
+
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Number of published stories
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Number of likes received
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Avg likes per stories:
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Number of dislikes received
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Average of dice used
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Number of stories
+                                    <span class="badge badge-secondary badge-pill"></span>
+                                </li>
+                            </ul>
+
+                            <h2> No stats </h2>
+
+                    <br><br>
+                    </div>
+                </div>
+
+            {% else: %}
+                <h2> You haven't published stories yet </h2>
+            {% endif %}
+
+
+        </div>
+    </div>
+
+<script>
+    function deleteStory(story_id) {
+        fetch('/stories/' + story_id, {method: 'DELETE'})
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message)
+                window.location.replace('/stories');
+            });
+    }
+</script>
+
+</body>
+</html>
