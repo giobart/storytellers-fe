@@ -3,96 +3,137 @@
 <head>
     {% include 'html_components/bootstrap.html' %}
     <link href="/static/css/story.css" rel="stylesheet"/>
+    <script src="/static/scripts/components/StoryComponent.js"></script>
 </head>
 
 <body>
-    <!--Navigation bar-->
-    {% include 'html_components/nav.html' %}
-    <!--end of Navigation bar-->
-    <div class="container-fluid">
+<!--Navigation bar-->
+{% include 'html_components/nav.html' %}
+
+<!--end of Navigation bar-->
+<div class="container-fluid">
     <div class="row">
 
     </div>
 
-        <div class="jumbotron  bg-white" id="story-container">
+    <div class="jumbotron  bg-white" id="story-container">
 
-            {% if stories != []: %}
-                <div class="row flex-column-reverse flex-md-row">
+        {% if stories != []: %}
+        <div class="row flex-column-reverse flex-md-row">
 
-                    <!-- -------------- STORY LIST ------------- -->
-                    <div class="col-sm-6">
+            <!-- -------------- STORY LIST ------------- -->
+            <div class="col-sm-6">
 
-                        <h2>Your Stories</h2>
-                        <hr class="style1">
-                        <br>
-                        {% for story in stories %}
-                            <div>
-                                <ul class="list-group">
-                                    {% if story.is_draft %}
-                                        {% include 'html_components/story_draft_template.html' %}
-                                    {% else %}
-                                        {% include 'html_components/story_template.html' %}
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        {% endfor %}
-
-                    </div>
+                <h2>Your Stories</h2>
+                <hr class="style1">
+                <br>
+                <div>
+                    <ul class="list-group" id="story-list">
+                        <script>
+                            deleteCallback = a => console.log(a.data.param1)
 
 
-                    <!-- -------------- STATISTICS------------- -->
+                            story = new StoryComponent($('#story-list'), 1)
+                            story.theme = 'halloween'
+                            story.text = 'hello world'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
 
-                    <div class="col-sm-6">
+                            story = new StoryComponent($('#story-list'), 2)
+                            story.theme = 'draft'
+                            story.text = 'hello world2'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
 
-                            <h2>Your Statistics</h2>
-                            <hr class="style1">
-                            <br>
-                            <div class="alert alert-primary" role="alert">
-                                You are an  user, since you
-                                 post a story in the last seven days
-                            </div>
+                            story = new StoryComponent($('#story-list'), 3)
+                            story.theme = 'standard'
+                            story.text = 'hello world3'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
+                            story.text = 'updated'
+                            story.update()
+                            story.update()
+                            story.update()
 
 
-                            <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Number of published stories
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Number of likes received
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Avg likes per stories:
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Number of dislikes received
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Average of dice used
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Number of stories
-                                    <span class="badge badge-secondary badge-pill"></span>
-                                </li>
-                            </ul>
-
-                            <h2> No stats </h2>
-
-                    <br><br>
-                    </div>
+                        </script>
+                    </ul>
                 </div>
 
-            {% else: %}
-                <h2> You haven't published stories yet </h2>
-            {% endif %}
+            </div>
 
 
+            <!-- -------------- STATISTICS------------- -->
+
+            <div class="col-sm-6">
+
+                <h2>Your Statistics</h2>
+                <hr class="style1">
+                <br>
+                <div class="alert alert-primary" role="alert">
+                    You are an user, since you
+                    post a story in the last seven days
+                </div>
+
+
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of published stories
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of likes received
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Avg likes per stories:
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of dislikes received
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Average of dice used
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Number of stories
+                        <span class="badge badge-secondary badge-pill"></span>
+                    </li>
+                </ul>
+
+                <h2> No stats </h2>
+
+                <br><br>
+            </div>
         </div>
+
+        {% else: %}
+        <h2> You haven't published stories yet </h2>
+        {% endif %}
+
+
     </div>
+</div>
 
 <script>
     function deleteStory(story_id) {

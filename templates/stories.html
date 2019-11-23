@@ -5,6 +5,8 @@
     <link href="/static/css/story.css" rel="stylesheet"/>
     <!-- Custom styles for this template -->
     <link href="/static/css/sidebar.css" rel="stylesheet">
+    <script src="/static/scripts/components/StoryComponent.js"></script>
+
 </head>
 <body>
 
@@ -28,13 +30,14 @@
 
             <div class="list-group list-group-flush">
                 {% for user in users %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center" id="user_{{ user.id }}">
-                        <a class="text-dark btn" disabled="true"
-                           href="/users/{{ user.id }}">{{ user.username }}</a>
-                        <a type="button" class="btn badge badge-danger badge-pill bg-danger text-white" onclick="unfollow({{ user.id }})">
-                            Unfollow
-                        </a>
-                    </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center" id="user_{{ user.id }}">
+                    <a class="text-dark btn" disabled="true"
+                       href="/users/{{ user.id }}">{{ user.username }}</a>
+                    <a type="button" class="btn badge badge-danger badge-pill bg-danger text-white"
+                       onclick="unfollow({{ user.id }})">
+                        Unfollow
+                    </a>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -45,24 +48,76 @@
             <!-- Story list -->
             <ul class="list-group">
                 <div class="row">
-                    {% for story in stories: %}
-                        <div class="col-md-12">
-                            {% include 'html_components/story_template.html' %}
-                        </div>
-                    {% else %}
-                        <div class="container text-center justify-content-center align-items-center h-100"
-                             id="page-content-wrapper">
 
-                            <h3 class="display-5" style="margin-top: 4rem">
-                                {% if message is defined and message!="" %}
-                                    {{ message }}
-                                {% else %}
-                                    Nothing found
-                                {% endif %}
-                            </h3>
+                    <div class="col-md-12" id="story-list">
+                        <script>
+                            deleteCallback = a => console.log(a.data.param1)
+                            story = new StoryComponent($('#story-list'), 1)
+                            story.theme = 'halloween'
+                            story.text = 'hello world'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
 
-                        </div>
-                    {% endfor %}
+                            deleteCallback = a => console.log(a.data.param1)
+                            story = new StoryComponent($('#story-list'), 1)
+                            story.theme = 'standard'
+                            story.text = 'hello world'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
+
+                            deleteCallback = a => console.log(a.data.param1)
+                            story = new StoryComponent($('#story-list'), 1)
+                            story.theme = 'xmas'
+                            story.text = 'hello world'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
+
+                            deleteCallback = a => console.log(a.data.param1)
+                            story = new StoryComponent($('#story-list'), 1)
+                            story.theme = 'halloween'
+                            story.text = 'hello world'
+                            story.date = '25/08/1996'
+                            story.author = 'giobarty'
+                            story.authorId = 1
+                            story.likes = 5
+                            story.dislikes = 100
+                            story.currentUser = 'giobarty'
+                            story.onDeleteStoryCallback = deleteCallback
+                            story.render()
+                        </script>
+                    </div>
+
+                    <div class="container text-center justify-content-center align-items-center h-100"
+                         id="page-content-wrapper">
+
+                        <h3 class="display-5" style="margin-top: 4rem">
+                            {% if message is defined and message!="" %}
+                            {{ message }}
+                            {% else %}
+                            Nothing found
+                            {% endif %}
+                        </h3>
+
+                    </div>
+
                 </div>
             </ul>
 
