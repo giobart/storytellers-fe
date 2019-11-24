@@ -136,6 +136,12 @@
 </div>
 
 <script>
+
+    username = sessionStorage.getItem("username")
+    if(!username){
+        window.location.href = '/login';
+    }
+
     function deleteStory(story_id) {
         fetch('/stories/' + story_id, {method: 'DELETE'})
             .then(response => response.json())

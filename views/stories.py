@@ -1,5 +1,5 @@
+import json
 from flask import Blueprint, render_template
-from flask_restful.representations import json
 
 stories = Blueprint('stories', __name__)
 
