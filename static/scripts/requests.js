@@ -45,14 +45,10 @@ function signup() {
     new_user = {
         email: $("#email").val(),
         username: $("#username").val(),
-        password: $("#password").val()
+        password: $("#password").val(),
     }
 
     $('#signup-error').show()
-
-    // Login automatically on Signup?
-    //sessionStorage.setItem("tmp_username", user.username)
-    //essionStorage.setItem("tmp_password", user.password)
 
     $.ajax({
         type: "POST",
@@ -71,14 +67,17 @@ function signup() {
 
 function signup_response_callback(data, status, xhr) {
 
-    if (status == 200) {
-        //Redirect to the Login page
-        window.location.replace(FRONT_END + LOGIN_API)
-        //sessionStorage.setItem("username", sessionStorage.getItem("tmp_username"))
-        //sessionStorage.setItem("password", sessionStorage.getItem("tmp_password"))
-        //window.location.href = '/';
-    } else {
-        $('#credential-error').show()
+    switch(status) {
+        case 200:
+            // Here 'replace' since we don't want the user to go back to the signup page.
+            window.location.replace(FRONT_END + LOGIN_API)
+            break
+        case 409:
+            if(xhr.response.error == '9E')
+                $('#name-error').show()
+            else
+                $('#mail-error').show()
+            break
     }
 
 }

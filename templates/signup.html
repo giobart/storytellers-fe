@@ -16,9 +16,13 @@
                 <button type="button" class="close">×</button>
                 Connection with server lost
             </div>
-            <div class="alert fade in" id="credential-error" style="display:none;">
+            <div class="alert fade in" id="name-error" style="display:none;">
                 <button type="button" class="close">×</button>
-                Invalid Username or Password
+                Username already in use
+            </div>
+            <div class="alert fade in" id="mail-error" style="display:none;">
+                <button type="button" class="close">×</button>
+                Email address already in use
             </div>
         </div>
         <div class="row">
@@ -31,6 +35,14 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                    </div>
+                                    <input class="form-control" id="username" placeholder="Username" type="username">
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
                                         <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                                     </div>
                                     <input name="" class="form-control" id="email" placeholder="example@example.com"
@@ -40,9 +52,19 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                                     </div>
-                                    <input class="form-control" id="username" placeholder="Username" type="username">
+                                    <input name="" class="form-control" id="firstname" placeholder="First name"
+                                           type="text">
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                    </div>
+                                    <input name="" class="form-control" id="lastname" placeholder="Last name"
+                                           type="text">
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
@@ -51,6 +73,15 @@
                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                     </div>
                                     <input class="form-control" id="password" placeholder="******" type="password">
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                    </div>
+                                    <input name="" class="form-control" id="dateofbirth" placeholder="01/01/2000"
+                                           type="date">
                                 </div> <!-- input-group.// -->
                             </div> <!-- form-group// -->
                             <div class="form-group">
