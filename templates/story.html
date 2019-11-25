@@ -34,43 +34,34 @@
         story.render()
 
         function like(url) {
-            let formData = new FormData()
-            formData.append('like', '1')
-            //TODO: UPDATE URL AND LOGIC
-            fetch("URL", {method: 'POST', body: formData})
-                .then(response => response.ok ? response.json() : Promise.reject('Story already liked'))
-                .then(data => {
-                    if (data.message === 'Reaction updated') {
-                        story.likes++;
-                        story.update()
-                    } else {
-                        story.dislikes++;
-                        story.update()
-                    }
-                }).catch(msg => {
-                $('#message').text(msg)
-            })
+            react(url, 'like')
         }
 
         function dislike(url) {
+            react(url, 'dislike')
+        }
+
+        function react(url, val) {
             let formData = new FormData()
-            formData.append('dislike', '1')
-            //TODO: UPDATE URL AND LOGIC
-            fetch("URL", {method: 'POST', body: formData})
+            var payload = {}
+            formData.append('react', val)
+            formData.forEach((value, key) => {payload[key] = value});
+            var json = JSON.stringify(payload)
+            //TODO: UPDATE URL
+            fetch("URL", {method: 'POST', body: json})
                 .then(response => response.ok ? response.json() : Promise.reject('Story already disliked'))
                 .then(data => {
-                    if (data.message === 'Reaction updated') {
-                        $('#dislikes').text(function (idx, old) {
-                            return parseInt(old) + 1
-                        })
-                        $('#likes').text(function (idx, old) {
-                            return parseInt(old) - 1
-                        })
-                    } else {
-                        $('#dislikes').text(function (idx, old) {
-                            return parseInt(old) + 1
-                        })
+                    if (val === 'like') {
+                        story.likes++;
+                        if (data.message === 'Reaction updated')
+                            story.dislikes--;
                     }
+                    else {
+                        story.dislikes++;
+                        if (data.message === 'Reaction updated')
+                            story.likes--;
+                    }
+                    story.update()
                 }).catch(msg => {
                 $('#message').text(msg)
             })
