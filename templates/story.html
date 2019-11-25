@@ -47,9 +47,9 @@
             formData.append('react', val)
             formData.forEach((value, key) => {payload[key] = value});
             var json = JSON.stringify(payload)
-            //TODO: UPDATE URL
+            //TODO: UPDATE URL AND REFACTOR ERROR HANDLING
             fetch("URL", {method: 'POST', body: json})
-                .then(response => response.ok ? response.json() : Promise.reject('Story already disliked'))
+                .then(response => response.json())
                 .then(data => {
                     if (val === 'like') {
                         story.likes++;
@@ -62,7 +62,8 @@
                             story.likes--;
                     }
                     story.update()
-                }).catch(msg => {
+                })
+                .catch(msg => {
                 $('#message').text(msg)
             })
         }
