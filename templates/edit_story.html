@@ -26,11 +26,10 @@
         <div class="bg-image standard"></div>
     {% endif %}
 
-    <div class="container d-flex flex-wrap align-items-center bg-text">
+    <div class="container d-flex flex-wrap align-items-center bg-text" name="edit-story-container">
         <div class="jumbotron w-100 transparent-bg">
 
             <form action="/stories/{{ story_id }}/edit" method="POST" role="form" name="storyform">
-                {{ form.hidden_tag() }}
 
                 <div class="row">
                     <div class="col-sm-12 center-block text-center">
@@ -52,23 +51,11 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12 center-block text-center">
-                        <br>
-                        {{ form['text'].label }}
-                        <br>
-                        {{ form['text'](class_='form-control input-lg bg-dark text-white') }}
+                        <textarea class=input name="textarea"></textarea>>
 
-                        <!-- THIS FIELD IS HIDDEN -->
-                        {{ form['is_draft']() }}
-                        <!-- ==================== -->
-
-                        {% for e in form['text'].errors %}
-                            <p class="help-block">{{ e }}</p>
-                        {% endfor %}
-                        <br>
-
-                        <button type="button" id="validate" class="btn btn-success">Submit Story</button>
-                        <button type="button" id="draft" class="btn btn-primary">Submit Draft Story</button>
-                        <button type="button" id="cancel" class="btn btn-danger">Cancel</button>
+                        <button type="button" id="validate" class="btn btn-success" onclick="submit()">Submit Story</button>
+                        <button type="button" id="draft" class="btn btn-primary" onclick="submit_draft()">Submit Draft Story</button>
+                        <button type="button" id="cancel" class="btn btn-danger" onclick="cancel_draft()">Cancel</button>
             </form>
         </div>
     </div>
