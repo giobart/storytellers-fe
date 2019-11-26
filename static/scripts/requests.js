@@ -130,11 +130,11 @@ function story_callback(data, status, xhr) {
         story.theme = story.theme
         story.text = story.text
         story.date = story.date
-        story.author = 'giobarty'
+        story.author = get_username(story.authorId)
         story.authorId = story.author_id
         story.likes = story.likes
         story.dislikes = story.dislikes
-        story.currentUser = 'author'
+        story.currentUser = ''
         story.onDeleteStoryCallback = function () {}
     });
 
@@ -228,13 +228,22 @@ function react(url, val) {
 }
 
 function deleteCallback() {
-
+    $.ajax({
+        type: "DELETE",
+        url: API_GATEWAY + STORIES_API,       
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        success: () => window.location.replace(API_GATEWAY + STORIES_API),
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
 }
 
 function roll_dice() {
     dice = {
         dicenum: $("btn btn-secondary active").text(),
-        diceset: $("btn btn-dark text-white").value
+        diceset: $("btn btn-dark text-white").val()
     }
     $.ajax({
         type: "POST",
@@ -256,7 +265,26 @@ function roll_dice_callback(data, status, xhr) {
     PUT_STORY_LINK = body.story
     params = link.split('/')
     storyId = params[params.length-1]
+    dice_set = ''
+    theme = ''
+    $.ajax({
+        type: "GET",
+        url: PUT_STORY_LINK,
+        dataType: "json",
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        success: function(data) {
+            var body = $.parseJSON(data)
+            dice_set = body.dice_set
+            theme = body.theme
+        },
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
     story = new BigStoryComponent($('#edit-story-container'), storyId)
+    story.dice_set = dice_set
+    story.theme = theme
 }
 
 function cancel_draft() {
@@ -273,7 +301,7 @@ function submit_draft() {
 
 function submit_story(is_draft) {
     story = {
-        text: $("#textarea"),
+        text: $("#textarea").text(),
         draft: is_draft
     }
     $.ajax({

@@ -1,53 +1,29 @@
 <html>
-
 <head>
     {% include 'html_components/bootstrap.html' %}
-    <style>
-        #is_draft {
-            display: none;
-        }
-    </style>
     <link href="/static/css/story.css" rel="stylesheet"/>
     <link href="/static/css/background.css" rel="stylesheet"/>
 </head>
-
 <body>
 
-<!-- ----------------- NAV BAR ------------------ -->
-{% if current_user.is_authenticated %}
-
+    <!--Navigation bar-->
     {% include 'html_components/nav.html' %}
+    <!--end of Navigation bar-->
 
-    {% if story.theme == 'xmas' %}
-        <div class="bg-image xmas"></div>
-    {% elif story.theme == 'halloween' %}
-        <div class="bg-image halloween"></div>
-    {% elif story.theme == 'standard' %}
-        <div class="bg-image standard"></div>
-    {% endif %}
+    <div class="bg-image draft"></div>
+
 
     <div class="container d-flex flex-wrap align-items-center bg-text" name="edit-story-container">
         <div class="jumbotron w-100 transparent-bg">
 
-            <form action="/stories/{{ story_id }}/edit" method="POST" role="form" name="storyform">
+            <form action="/stories/{{ story_id }}" method="PUT" role="form">
 
                 <div class="row">
                     <div class="col-sm-12 center-block text-center">
                         <h5>Current dice values </h5>
+                        <b>${this.dice_set}</b>
                         <hr class="style2">
                     </div>
-                </div>
-                <div class="row">
-                    {% for die in dice %}
-                        <div class="col">
-                            <div class="card card-block d-flex text-white bg-transparent border border-light mb-3"
-                                 style="width: 8rem; height: 8rem;">
-                                <div class="card-body align-items-center d-flex justify-content-center">
-                                    <h5 class="card-title ">{{ die }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
                 <div class="row">
                     <div class="col-sm-12 center-block text-center">
@@ -61,12 +37,6 @@
     </div>
 
     </div>
-
-
-
-{% else %}
-    Hi Anonymous, <a href="/login">Log in</a>
-{% endif %}
 
 </div>
 
