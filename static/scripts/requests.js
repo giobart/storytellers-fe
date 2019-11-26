@@ -4,6 +4,7 @@ SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
 STORIES_API = "/stories"
 REACT_API = "/react"
+USERS_API = "/users"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -107,7 +108,7 @@ function logout() {
 
 
 function story_list() {
-    USER_STORY_LIST=USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
+    USER_STORY_LIST = USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
     $.ajax({
         type: "GET",
@@ -125,16 +126,17 @@ function story_list() {
 function story_callback(data, status, xhr) {
 
     data.forEach(story => {
-        story = new StoryComponent($('#story-list'), 1)
-        story.theme = story.theme
-        story.text = story.text
-        story.date = story.date
-        story.author = 'giobarty'
-        story.authorId = story.author_id
-        story.likes = story.likes
-        story.dislikes = story.dislikes
-        story.currentUser = 'author'
-        story.onDeleteStoryCallback = function () {}
+        storycomponent = new StoryComponent($('#story-list'), story.id)
+        storycomponent.theme = story.theme
+        storycomponent.text = story.text
+        storycomponent.date = story.date
+        storycomponent.author = 'giobarty'
+        storycomponent.authorId = story.author_id
+        storycomponent.likes = story.likes
+        storycomponent.dislikes = story.dislikes
+        storycomponent.currentUser = 'author'
+        storycomponent.onDeleteStoryCallback = function () {
+        }
     });
 
 }
@@ -163,7 +165,7 @@ function single_story_callback(data, status, xhr) {
     story.likes = body.likes
     story.dislikes = body.dislikes
     story.currentUser = ''
-    story.diceSet= body.dice_set
+    story.diceSet = body.dice_set
     story.onLikeCallback = like
     story.onDislikeCallback = dislike
     story.render()
@@ -172,17 +174,17 @@ function single_story_callback(data, status, xhr) {
 
 function get_username(userid) {
     $.ajax({
-    type: "GET",
-    url: API_GATEWAY + USERS_API,
-    crossDomain: true,
-    success: function(data) {
-        var body = $.parseJSON(data)
-        return body.username
-    },
-    error: function (errMsg) {
-        $("#message").show()
-    }
-});
+        type: "GET",
+        url: API_GATEWAY + USERS_API,
+        crossDomain: true,
+        success: function (data) {
+            var body = $.parseJSON(data)
+            return body.username
+        },
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
 }
 
 function like(evt) {
@@ -198,7 +200,9 @@ function react(url, val) {
     let formData = new FormData()
     var payload = {}
     formData.append('react', val)
-    formData.forEach((value, key) => {payload[key] = value});
+    formData.forEach((value, key) => {
+        payload[key] = value
+    });
     var json = JSON.stringify(payload)
     url = API_GATEWAY + STORIES_API + '/' + storyId + REACT_API
     fetch(url, {method: 'POST', body: json})
@@ -211,8 +215,7 @@ function react(url, val) {
                 story.likes++;
                 if (data.message === 'Reaction updated')
                     story.dislikes--;
-            }
-            else {
+            } else {
                 story.dislikes++;
                 if (data.message === 'Reaction updated')
                     story.likes--;
@@ -223,9 +226,90 @@ function react(url, val) {
             if (code != 400 && code != 404 && code != 403 && code != 410)
                 msg = 'An error occurred while processing your request. Please try again later.'
             $('#message').text(msg)
-    })
+        })
 }
 
 function deleteCallback() {
 
 }
+
+function get_users() {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + USERS_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: users_callback,
+        error: function (errMsg) {
+            $("#users-list").append("<h1> No users found </h1>")
+        }
+    });
+}
+
+function users_callback(data, status, xhr) {
+    data.forEach(user => {
+        usercomponent = new UserComponent($('#users-list'), user['user_id'])
+        usercomponent.username = user.username
+        usercomponent.firstname = user.firstname
+        usercomponent.lastname = user.lastname
+        usercomponent.render()
+    });
+}
+
+function get_users_story_list(id) {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STORIES_API + "?user_id=" + id,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        success: story_callback,
+        error: function (errMsg) {
+            $("#user-wall").html("<h3 class='display-5' style='margin-top: 4rem'> No stories published yet </h3>")
+        }
+    });
+}
+
+function users_stories_callback(data, status, xhr) {
+
+    $("#user-wall").html(
+        `
+        <div class="jumbotron bg-white" id="page-content-wrapper">
+
+            <h5><span id="user-name"></span>'s Wall</h5>
+            <hr class="style1"> ` +
+
+        sessionStorage.getItem("id") == data['author_id'] ? `` : `
+            <a href="#" class="btn btn-secondary"
+                   onclick="TODO-ADD-FOLLOW">Follow author</a>
+                <br><br>
+            `
+            + `
+            <ul class="list-group">
+                <div class="row" id="story-list"></div>
+            </ul>
+        </div>
+         `
+    )
+    get_username(id)
+    story_callback(data, status, xhr)
+
+
+}
+
+function get_username(id) {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + USERS_API + "/" + id,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            $("#user-name").html(data.usernameValue)
+        },
+        error: function (errMsg) {
+            $("#user-name").html("User")
+        }
+    });
+}
+
