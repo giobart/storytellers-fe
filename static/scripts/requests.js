@@ -3,6 +3,7 @@ LOGIN_API = "/login"
 SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
 STORIES_API = "/stories"
+REACT_API = "/react"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -138,7 +139,7 @@ function story_callback(data, status, xhr) {
 
 }
 
-function story(storyid) {
+function story_render(storyid) {
     $.ajax({
         type: "GET",
         url: API_GATEWAY + STORIES_API + '/' + storyid,
@@ -153,7 +154,7 @@ function story(storyid) {
 function single_story_callback(data, status, xhr) {
 
     var body = $.parseJSON(data)
-    story = new BigStoryComponent($('#story-container'), storyId)
+    var story = new BigStoryComponent($('#story-container'), storyId)
     story.theme = body.theme
     story.text = body.text
     story.date = body.date
@@ -163,8 +164,8 @@ function single_story_callback(data, status, xhr) {
     story.dislikes = body.dislikes
     story.currentUser = ''
     story.diceSet= body.dice_set
-    story.onLikeCallback= like
-    story.onDislikeCallback= dislike
+    story.onLikeCallback = like
+    story.onDislikeCallback = dislike
     story.render()
 
 }
@@ -182,4 +183,49 @@ function get_username(userid) {
         $("#message").show()
     }
 });
+}
+
+function like(evt) {
+    //react(storyId, 'like')
+    react(evt.data.param1, 'like')
+}
+
+function dislike(evt) {
+    react(evt.data.param1, 'dislike')
+}
+
+function react(url, val) {
+    let formData = new FormData()
+    var payload = {}
+    formData.append('react', val)
+    formData.forEach((value, key) => {payload[key] = value});
+    var json = JSON.stringify(payload)
+    url = API_GATEWAY + STORIES_API + '/' + storyId + REACT_API
+    fetch(url, {method: 'POST', body: json})
+        .then(response => {
+            code = response.status
+            response.json()
+        })
+        .then(data => {
+            if (val === 'like') {
+                story.likes++;
+                if (data.message === 'Reaction updated')
+                    story.dislikes--;
+            }
+            else {
+                story.dislikes++;
+                if (data.message === 'Reaction updated')
+                    story.likes--;
+            }
+            story.update()
+        })
+        .catch(msg => {
+            if (code != 400 && code != 404 && code != 403 && code != 410)
+                msg = 'An error occurred while processing your request. Please try again later.'
+            $('#message').text(msg)
+    })
+}
+
+function deleteCallback() {
+
 }
