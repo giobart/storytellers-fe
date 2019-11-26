@@ -130,11 +130,11 @@ function story_callback(data, status, xhr) {
         story.theme = story.theme
         story.text = story.text
         story.date = story.date
-        story.author = get_username(story.authorId)
+        story.author = 'giobarty'
         story.authorId = story.author_id
         story.likes = story.likes
         story.dislikes = story.dislikes
-        story.currentUser = ''
+        story.currentUser = 'author'
         story.onDeleteStoryCallback = function () {}
     });
 
@@ -243,7 +243,7 @@ function deleteCallback() {
 function roll_dice() {
     dice = {
         dicenum: $("btn btn-secondary active").text(),
-        diceset: $("btn btn-dark text-white").val()
+        diceset: $("btn btn-dark text-white").value
     }
     $.ajax({
         type: "POST",
@@ -301,7 +301,7 @@ function submit_draft() {
 
 function submit_story(is_draft) {
     story = {
-        text: $("#textarea").text(),
+        text: $("#textarea"),
         draft: is_draft
     }
     $.ajax({

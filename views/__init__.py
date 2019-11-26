@@ -1,6 +1,7 @@
 from .auth import auth
 from .home import home
 from .stories import stories
+from .users import users
 
 
-blueprints = [home, auth, stories]
+blueprints = [home, auth, stories, users]
