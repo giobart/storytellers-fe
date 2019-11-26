@@ -18,6 +18,8 @@
 <div class="container" style="width: 100%" id="story-container">
     <script  type="text/javascript">
 
+        code = 0
+
         storyId = parseInt({{ data | tojson }});
         story = new BigStoryComponent($('#story-container'), storyId)
         story.theme = 'halloween'
@@ -47,9 +49,14 @@
             formData.append('react', val)
             formData.forEach((value, key) => {payload[key] = value});
             var json = JSON.stringify(payload)
-            //TODO: UPDATE URL AND REFACTOR ERROR HANDLING
-            fetch("URL", {method: 'POST', body: json})
-                .then(response => response.json())
+            var path = window.location.pathname.split('/')
+            url = path[2] // Get the storyid from url
+            // TODO: REFACTOR ERROR HANDLING
+            fetch(url, {method: 'POST', body: json})
+                .then(response => {
+                    code = response.status
+                    response.json()
+                })
                 .then(data => {
                     if (val === 'like') {
                         story.likes++;
@@ -64,7 +71,9 @@
                     story.update()
                 })
                 .catch(msg => {
-                $('#message').text(msg)
+                    if (code != 400 && code != 404 && code != 403 && code != 410)
+                        msg = 'An error occurred while processing your request. Please try again later.'
+                    $('#message').text(msg)
             })
         }
     </script>
