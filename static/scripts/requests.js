@@ -2,6 +2,7 @@ API_GATEWAY = "http://localhost:8081"
 LOGIN_API = "/login"
 SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
+USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
 function login() {
@@ -16,7 +17,6 @@ function login() {
     $.ajax({
         type: "POST",
         url: API_GATEWAY + LOGIN_API,
-        // The key needs to match your method's input parameter (case-sensitive).
         data: JSON.stringify(user),
         xhrFields: {withCredentials: true},
         crossDomain: true,
@@ -53,7 +53,6 @@ function signup() {
     $.ajax({
         type: "POST",
         url: API_GATEWAY + SIGNUP_API,
-        // The key needs to match ysour method's input parameter (case-sensitive).
         data: JSON.stringify(new_user),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -88,12 +87,13 @@ function logout() {
     $.ajax({
         type: "POST",
         url: API_GATEWAY + LOGOUT_API,
-        // The key needs to match ysour method's input parameter (case-sensitive).
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: function(e){window.location.href = LOGIN_API},
+        success: function (e) {
+            window.location.href = LOGIN_API
+        },
         error: function (errMsg) {
             sessionStorage.setItem("username", "")
             sessionStorage.setItem("password", "")
@@ -105,27 +105,34 @@ function logout() {
 
 
 function story_list() {
-    new_user = {
-        email: $("#email").val(),
-        username: $("#username").val(),
-        password: $("#password").val(),
-    }
+    USER_STORY_LIST=USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
     $.ajax({
-        type: "POST",
-        url: API_GATEWAY + SIGNUP_API,
+        type: "GET",
+        url: API_GATEWAY + USER_STORY_LIST,
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        // The key needs to match ysour method's input parameter (case-sensitive).
-        data: JSON.stringify(new_user),
-        contentType: "application/json; charset=utf-8",
         dataType: "json",
-        success: signup_response_callback,
+        success: story_callback,
         error: function (errMsg) {
-            if (errMsg.responseJSON.code == "E029U")
-                $('#name-error').show()
-            else
-                $('#mail-error').show()
+            $("#story-list").append("<h1> No stories found </h1>")
         }
     });
+}
+
+function story_callback(data, status, xhr) {
+
+    data.forEach(story => {
+        story = new StoryComponent($('#story-list'), 1)
+        story.theme = story.theme
+        story.text = story.text
+        story.date = story.date
+        story.author = 'giobarty'
+        story.authorId = story.author_id
+        story.likes = story.likes
+        story.dislikes = story.dislikes
+        story.currentUser = 'author'
+        story.onDeleteStoryCallback = function () {}
+    });
+
 }

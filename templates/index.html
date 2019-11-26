@@ -30,50 +30,7 @@
                 <div>
                     <ul class="list-group" id="story-list">
                         <script>
-                            deleteCallback = a => console.log(a.data.param1)
-
-
-                            story = new StoryComponent($('#story-list'), 1)
-                            story.theme = 'halloween'
-                            story.text = 'hello world'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-
-                            story = new StoryComponent($('#story-list'), 2)
-                            story.theme = 'draft'
-                            story.text = 'hello world2'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-
-                            story = new StoryComponent($('#story-list'), 3)
-                            story.theme = 'standard'
-                            story.text = 'hello world3'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-                            story.text = 'updated'
-                            story.update()
-                            story.update()
-                            story.update()
-
-
+                            story_list()
                         </script>
                     </ul>
                 </div>
