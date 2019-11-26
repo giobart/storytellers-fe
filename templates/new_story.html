@@ -6,8 +6,6 @@
 </head>
 <body>
 
-{% if current_user.is_authenticated %}
-
     <!--Navigation bar-->
     {% include 'html_components/nav.html' %}
     <!--end of Navigation bar-->
@@ -49,17 +47,27 @@
                         <label for="validationTooltip02">Choose Dice Set</label>
                         <div class="form-group">
                             <div class="btn-group" data-toggle="buttons">
-                                {% for set in diceset %}
                                     <label class="btn btn-dark text-white">
                                         <input type="radio" name="diceset" id="dicenum" autocomplete="off"
-                                               value="{{ set }}"
+                                               value="standard"
                                                style="visibility:hidden;" checked>
-                                        {{ set }}
-                                        <img src="static/img/{{ set }}.png" style="height: 2em;width: 2em;">
+                                        standard
+                                        <img src="static/img/standard.png" style="height: 2em;width: 2em;">
                                     </label>
-
-                                {% endfor %}
-
+                                    <label class="btn btn-dark text-white">
+                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
+                                               value="halloween"
+                                               style="visibility:hidden;" checked>
+                                        standard
+                                        <img src="static/img/halloween.png" style="height: 2em;width: 2em;">
+                                    </label>
+                                    <label class="btn btn-dark text-white">
+                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
+                                               value="xmas"
+                                               style="visibility:hidden;" checked>
+                                        standard
+                                        <img src="static/img/xmas.png" style="height: 2em;width: 2em;">
+                                    </label>
                             </div>
                         </div>
                         <br>
@@ -69,14 +77,16 @@
             </div>
         </div>
     </div>
-
-
-
-{% else %}
-    Hi Anonymous, <a href="/login">Log in</a>
-{% endif %}
-
 </div>
+
+<script>
+
+    username = sessionStorage.getItem("username")
+    if (!username) {
+        window.location.href = '/login';
+    }
+
+</script>
 
 
 </body>

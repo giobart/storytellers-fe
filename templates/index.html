@@ -18,7 +18,6 @@
 
     <div class="jumbotron  bg-white" id="story-container">
 
-        {% if stories != []: %}
         <div class="row flex-column-reverse flex-md-row">
 
             <!-- -------------- STORY LIST ------------- -->
@@ -78,16 +77,9 @@
                     </li>
                 </ul>
 
-                <h2> No stats </h2>
-
                 <br><br>
             </div>
         </div>
-
-        {% else: %}
-        <h2> You haven't published stories yet </h2>
-        {% endif %}
-
 
     </div>
 </div>
