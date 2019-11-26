@@ -2,6 +2,8 @@ API_GATEWAY = "http://localhost:8081"
 LOGIN_API = "/login"
 SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
+STORIES_API = "/stories"
+REACT_API = "/react"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -134,5 +136,96 @@ function story_callback(data, status, xhr) {
         story.currentUser = 'author'
         story.onDeleteStoryCallback = function () {}
     });
+
+}
+
+function story_render(storyid) {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STORIES_API + '/' + storyid,
+        crossDomain: true,
+        success: single_story_callback,
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
+}
+
+function single_story_callback(data, status, xhr) {
+
+    var body = $.parseJSON(data)
+    var story = new BigStoryComponent($('#story-container'), storyId)
+    story.theme = body.theme
+    story.text = body.text
+    story.date = body.date
+    story.authorId = body.author_id
+    story.author = get_username(story.authorId)
+    story.likes = body.likes
+    story.dislikes = body.dislikes
+    story.currentUser = ''
+    story.diceSet= body.dice_set
+    story.onLikeCallback = like
+    story.onDislikeCallback = dislike
+    story.render()
+
+}
+
+function get_username(userid) {
+    $.ajax({
+    type: "GET",
+    url: API_GATEWAY + USERS_API,
+    crossDomain: true,
+    success: function(data) {
+        var body = $.parseJSON(data)
+        return body.username
+    },
+    error: function (errMsg) {
+        $("#message").show()
+    }
+});
+}
+
+function like(evt) {
+    //react(storyId, 'like')
+    react(evt.data.param1, 'like')
+}
+
+function dislike(evt) {
+    react(evt.data.param1, 'dislike')
+}
+
+function react(url, val) {
+    let formData = new FormData()
+    var payload = {}
+    formData.append('react', val)
+    formData.forEach((value, key) => {payload[key] = value});
+    var json = JSON.stringify(payload)
+    url = API_GATEWAY + STORIES_API + '/' + storyId + REACT_API
+    fetch(url, {method: 'POST', body: json})
+        .then(response => {
+            code = response.status
+            response.json()
+        })
+        .then(data => {
+            if (val === 'like') {
+                story.likes++;
+                if (data.message === 'Reaction updated')
+                    story.dislikes--;
+            }
+            else {
+                story.dislikes++;
+                if (data.message === 'Reaction updated')
+                    story.likes--;
+            }
+            story.update()
+        })
+        .catch(msg => {
+            if (code != 400 && code != 404 && code != 403 && code != 410)
+                msg = 'An error occurred while processing your request. Please try again later.'
+            $('#message').text(msg)
+    })
+}
+
+function deleteCallback() {
 
 }

@@ -16,66 +16,14 @@
 <!-- story, marked, val -->
 
 <div class="container" style="width: 100%" id="story-container">
-    <script  type="text/javascript">
+    <script>
 
         code = 0
 
         storyId = parseInt({{ data | tojson }});
-        story = new BigStoryComponent($('#story-container'), storyId)
-        story.theme = 'halloween'
-        story.text = 'hello world'
-        story.date = '25/08/1996'
-        story.author = 'giobarty'
-        story.authorId = 1
-        story.likes = 5
-        story.dislikes = 100
-        story.currentUser = 'giobarty'
-        story.diceSet=['cow','cat','car','mummy']
-        story.onLikeCallback= like
-        story.onDislikeCallback= dislike
-        story.render()
+        
+        story_render(storyId)
 
-        function like(url) {
-            react(url, 'like')
-        }
-
-        function dislike(url) {
-            react(url, 'dislike')
-        }
-
-        function react(url, val) {
-            let formData = new FormData()
-            var payload = {}
-            formData.append('react', val)
-            formData.forEach((value, key) => {payload[key] = value});
-            var json = JSON.stringify(payload)
-            var path = window.location.pathname.split('/')
-            url = path[2] // Get the storyid from url
-            // TODO: REFACTOR ERROR HANDLING
-            fetch(url, {method: 'POST', body: json})
-                .then(response => {
-                    code = response.status
-                    response.json()
-                })
-                .then(data => {
-                    if (val === 'like') {
-                        story.likes++;
-                        if (data.message === 'Reaction updated')
-                            story.dislikes--;
-                    }
-                    else {
-                        story.dislikes++;
-                        if (data.message === 'Reaction updated')
-                            story.likes--;
-                    }
-                    story.update()
-                })
-                .catch(msg => {
-                    if (code != 400 && code != 404 && code != 403 && code != 410)
-                        msg = 'An error occurred while processing your request. Please try again later.'
-                    $('#message').text(msg)
-            })
-        }
     </script>
 </div>
 </body>
