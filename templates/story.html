@@ -19,21 +19,35 @@
     <script  type="text/javascript">
 
         code = 0
+        API_GATEWAY = "http://localhost:8081"
+        STORIES_API = "/stories"
 
         storyId = parseInt({{ data | tojson }});
-        story = new BigStoryComponent($('#story-container'), storyId)
-        story.theme = 'halloween'
-        story.text = 'hello world'
-        story.date = '25/08/1996'
-        story.author = 'giobarty'
-        story.authorId = 1
-        story.likes = 5
-        story.dislikes = 100
-        story.currentUser = 'giobarty'
-        story.diceSet=['cow','cat','car','mummy']
-        story.onLikeCallback= like
-        story.onDislikeCallback= dislike
-        story.render()
+        $.ajax({
+            type: "GET",
+            url: API_GATEWAY + STORIES_API,
+            crossDomain: true,
+            success: function(data) {
+                var body = $.parseJSON(data)
+                story = new BigStoryComponent($('#story-container'), storyId)
+                story.theme = body.theme
+                story.text = body.text
+                story.date = body.date
+                story.author = 'giobarty' //here we should get the username from the user service
+                story.authorId = body.author_id
+                story.likes = body.likes
+                story.dislikes = body.dislikes
+                story.currentUser = 'giobarty'
+                story.diceSet= body.dice_set
+                story.onLikeCallback= like
+                story.onDislikeCallback= dislike
+                story.render()
+            },
+            error: function (errMsg) {
+                $("#message").show()
+            }
+        });
+        
 
         function like(url) {
             react(url, 'like')
@@ -51,7 +65,6 @@
             var json = JSON.stringify(payload)
             var path = window.location.pathname.split('/')
             url = path[2] // Get the storyid from url
-            // TODO: REFACTOR ERROR HANDLING
             fetch(url, {method: 'POST', body: json})
                 .then(response => {
                     code = response.status
