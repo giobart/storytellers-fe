@@ -19,25 +19,25 @@
             <div class="row">
                 <div class="col">
 
-                    <form action="/roll_dice" method="GET" role="form">
+                    <form  action="javascript:void(0);">
 
                         <label for="validationTooltip01">How many dice you want to roll?</label>
                         <div class="form-group">
                             <div class="btn-group" data-toggle="buttons">
 
-                                <label class="btn btn-secondary active">
+                                <label class="btn btn-secondary active" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="4"
                                            style="visibility:hidden;" checked> 4
                                 </label>
 
 
-                                <label class="btn btn-secondary">
+                                <label class="btn btn-secondary" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="5"
                                            style="visibility:hidden;"> 5
                                 </label>
 
 
-                                <label class="btn btn-secondary">
+                                <label class="btn btn-secondary" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="6"
                                            style="visibility:hidden;"> 6
                                 </label>
@@ -47,32 +47,32 @@
                         <label for="validationTooltip02">Choose Dice Set</label>
                         <div class="form-group">
                             <div class="btn-group" data-toggle="buttons">
-                                    <label class="btn btn-dark text-white">
-                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
+                                    <label class="btn btn-dark text-white" id="dicetheme">
+                                        <input type="radio" name="diceset"  autocomplete="off"
                                                value="standard"
                                                style="visibility:hidden;" checked>
                                         standard
                                         <img src="static/img/standard.png" style="height: 2em;width: 2em;">
                                     </label>
-                                    <label class="btn btn-dark text-white">
-                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
+                                    <label class="btn btn-dark text-white"  id="dicetheme" >
+                                        <input type="radio" name="diceset" autocomplete="off"
                                                value="halloween"
                                                style="visibility:hidden;" checked>
-                                        standard
+                                        halloween
                                         <img src="static/img/halloween.png" style="height: 2em;width: 2em;">
                                     </label>
-                                    <label class="btn btn-dark text-white">
-                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
+                                    <label class="btn btn-dark text-white" id="dicetheme">
+                                        <input type="radio" name="diceset" autocomplete="off"
                                                value="xmas"
                                                style="visibility:hidden;" checked>
-                                        standard
+                                        xmas
                                         <img src="static/img/xmas.png" style="height: 2em;width: 2em;">
                                     </label>
                             </div>
                         </div>
                         <br>
                         <button class="btn btn-success" onclick="roll_dice()">Roll the dice</button>
-                    </form>
+                    </form  actio>
                 </div>
             </div>
         </div>

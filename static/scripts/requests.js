@@ -318,8 +318,8 @@ function get_username(id) {
 
 function roll_dice() {
     dice = {
-        dicenum: $("btn btn-secondary active").text(),
-        diceset: $("btn btn-dark text-white").value
+        dicenum: parseInt($(".active#dicenum").text().trim()),
+        diceset: $(".active#dicetheme").text().trim()
     }
     $.ajax({
         type: "POST",
