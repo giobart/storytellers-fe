@@ -21,6 +21,7 @@
         code = 0
         API_GATEWAY = "http://localhost:8081"
         STORIES_API = "/stories"
+        USERS_API = "/users"
 
         storyId = parseInt({{ data | tojson }});
         $.ajax({
@@ -33,11 +34,11 @@
                 story.theme = body.theme
                 story.text = body.text
                 story.date = body.date
-                story.author = 'giobarty' //here we should get the username from the user service
                 story.authorId = body.author_id
+                story.author = get_username(story.authorId)
                 story.likes = body.likes
                 story.dislikes = body.dislikes
-                story.currentUser = 'giobarty'
+                story.currentUser = ''
                 story.diceSet= body.dice_set
                 story.onLikeCallback= like
                 story.onDislikeCallback= dislike
@@ -47,7 +48,21 @@
                 $("#message").show()
             }
         });
-        
+
+        function get_username(userid) {
+            $.ajax({
+            type: "GET",
+            url: API_GATEWAY + USERS_API,
+            crossDomain: true,
+            success: function(data) {
+                var body = $.parseJSON(data)
+                return body.username
+            },
+            error: function (errMsg) {
+                $("#message").show()
+            }
+        });
+        }        
 
         function like(url) {
             react(url, 'like')
