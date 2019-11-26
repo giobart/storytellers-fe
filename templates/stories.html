@@ -6,6 +6,7 @@
     <!-- Custom styles for this template -->
     <link href="/static/css/sidebar.css" rel="stylesheet">
     <script src="/static/scripts/components/StoryComponent.js"></script>
+    <script src="/static/scripts/requests.js"></script>
 
 </head>
 <body>
@@ -52,6 +53,7 @@
                     <div class="col-md-12" id="story-list">
                         <script>
 
+                            story_list()
 
                             deleteCallback = a => console.log(a.data.param1)
                             story = new StoryComponent($('#story-list'), 1)

@@ -5,6 +5,7 @@
     <link href="/static/css/story.css" rel="stylesheet"/>
     <link href="/static/css/background.css" rel="stylesheet"/>
     <script src="/static/scripts/components/BigStoryComponent.js"></script>
+    <script src="/static/scripts/requests.js"></script>
 </head>
 
 <body>
@@ -19,50 +20,10 @@
     <script  type="text/javascript">
 
         code = 0
-        API_GATEWAY = "http://localhost:8081"
-        STORIES_API = "/stories"
-        USERS_API = "/users"
 
         storyId = parseInt({{ data | tojson }});
-        $.ajax({
-            type: "GET",
-            url: API_GATEWAY + STORIES_API,
-            crossDomain: true,
-            success: function(data) {
-                var body = $.parseJSON(data)
-                story = new BigStoryComponent($('#story-container'), storyId)
-                story.theme = body.theme
-                story.text = body.text
-                story.date = body.date
-                story.authorId = body.author_id
-                story.author = get_username(story.authorId)
-                story.likes = body.likes
-                story.dislikes = body.dislikes
-                story.currentUser = ''
-                story.diceSet= body.dice_set
-                story.onLikeCallback= like
-                story.onDislikeCallback= dislike
-                story.render()
-            },
-            error: function (errMsg) {
-                $("#message").show()
-            }
-        });
-
-        function get_username(userid) {
-            $.ajax({
-            type: "GET",
-            url: API_GATEWAY + USERS_API,
-            crossDomain: true,
-            success: function(data) {
-                var body = $.parseJSON(data)
-                return body.username
-            },
-            error: function (errMsg) {
-                $("#message").show()
-            }
-        });
-        }        
+        
+        story(storyId)        
 
         function like(url) {
             react(url, 'like')

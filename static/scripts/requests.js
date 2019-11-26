@@ -2,6 +2,7 @@ API_GATEWAY = "http://localhost:8081"
 LOGIN_API = "/login"
 SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
+STORIES_API = "/stories"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -135,4 +136,50 @@ function story_callback(data, status, xhr) {
         story.onDeleteStoryCallback = function () {}
     });
 
+}
+
+function story(storyid) {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STORIES_API + '/' + storyid,
+        crossDomain: true,
+        success: single_story_callback,
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
+}
+
+function single_story_callback(data, status, xhr) {
+
+    var body = $.parseJSON(data)
+    story = new BigStoryComponent($('#story-container'), storyId)
+    story.theme = body.theme
+    story.text = body.text
+    story.date = body.date
+    story.authorId = body.author_id
+    story.author = get_username(story.authorId)
+    story.likes = body.likes
+    story.dislikes = body.dislikes
+    story.currentUser = ''
+    story.diceSet= body.dice_set
+    story.onLikeCallback= like
+    story.onDislikeCallback= dislike
+    story.render()
+
+}
+
+function get_username(userid) {
+    $.ajax({
+    type: "GET",
+    url: API_GATEWAY + USERS_API,
+    crossDomain: true,
+    success: function(data) {
+        var body = $.parseJSON(data)
+        return body.username
+    },
+    error: function (errMsg) {
+        $("#message").show()
+    }
+});
 }
