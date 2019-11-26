@@ -7,6 +7,7 @@ REACT_API = "/react"
 USERS_API = "/users"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
+PUT_STORY_LINK = ""
 
 function login() {
     user = {
@@ -108,7 +109,7 @@ function logout() {
 
 
 function story_list() {
-    USER_STORY_LIST = USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
+    USER_STORY_LIST=USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
     $.ajax({
         type: "GET",
@@ -155,8 +156,8 @@ function story_render(storyid) {
 
 function single_story_callback(data, status, xhr) {
 
-    var body = $.parseJSON(data)
-    var story = new BigStoryComponent($('#story-container'), storyId)
+    body = $.parseJSON(data)
+    story = new BigStoryComponent($('#story-container'), storyId)
     story.theme = body.theme
     story.text = body.text
     story.date = body.date
@@ -165,7 +166,7 @@ function single_story_callback(data, status, xhr) {
     story.likes = body.likes
     story.dislikes = body.dislikes
     story.currentUser = ''
-    story.diceSet = body.dice_set
+    story.diceSet= body.dice_set
     story.onLikeCallback = like
     story.onDislikeCallback = dislike
     story.render()
@@ -313,3 +314,64 @@ function get_username(id) {
     });
 }
 
+
+
+function roll_dice() {
+    dice = {
+        dicenum: $("btn btn-secondary active").text(),
+        diceset: $("btn btn-dark text-white").value
+    }
+    $.ajax({
+        type: "POST",
+        data: JSON.stringify(dice),
+        url: API_GATEWAY + STORIES_API,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        success: roll_dice_callback,
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
+}
+
+function roll_dice_callback(data, status, xhr) {
+    body = $.parseJSON(data)
+    PUT_STORY_LINK = body.story
+    params = link.split('/')
+    storyId = params[params.length-1]
+    story = new BigStoryComponent($('#edit-story-container'), storyId)
+}
+
+function cancel_draft() {
+    window.location.replace(API_GATEWAY + STORIES_API)
+}
+
+function submit() {
+    submit_story(0)
+}
+
+function submit_draft() {
+    submit_story(1)
+}
+
+function submit_story(is_draft) {
+    story = {
+        text: $("#textarea"),
+        draft: is_draft
+    }
+    $.ajax({
+        type: "PUT",
+        data: JSON.stringify(story),
+        url: PUT_STORY_LINK,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        success: () => {window.location.replace(API_GATEWAY + STORIES_API)},
+        error: function (errMsg) {
+            $("#message").show()
+        }
+    });
+}
