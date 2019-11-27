@@ -93,14 +93,14 @@ class BigStoryComponent {
 
     render() {
         this.container.append(this.markup());
-        $('#like-button-story-' + this.idValue).click({id: this.idValue}, this.onLikeCallbackFunc)
-        $('#dislike-button-story-' + this.idValue).click({id: this.idValue}, this.onDislikeCallbackFunc)
+        $('#like-button-story-' + this.idValue).click({id: this.idValue,story:this}, this.onLikeCallbackFunc)
+        $('#dislike-button-story-' + this.idValue).click({id: this.idValue,story:this}, this.onDislikeCallbackFunc)
     }
 
     update() {
         $('#big-story-' + this.idValue).replaceWith(this.markup());
-        $('#like-button-story-' + this.idValue).click({id: this.idValue}, this.onLikeCallbackFunc)
-        $('#dislike-button-story-' + this.idValue).click({id: this.idValue}, this.onDislikeCallbackFunc)
+        $('#like-button-story-' + this.idValue).click({id: this.idValue,story:this}, this.onLikeCallbackFunc)
+        $('#dislike-button-story-' + this.idValue).click({id: this.idValue,story:this}, this.onDislikeCallbackFunc)
     }
 
     constructor(container, id) {

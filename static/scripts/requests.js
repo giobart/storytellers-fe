@@ -6,6 +6,9 @@ STORIES_API = "/stories"
 STORIES_EDIT = "/stories/ID/edit"
 REACT_API = "/react"
 USERS_API = "/users"
+STATISTICS_API = "/stats"
+FOLLOWED_API = "/users/followed"
+FOLLOW_API = "/users/ID/follow"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -108,19 +111,26 @@ function logout() {
 }
 
 
-function story_list(all=false) {
+function story_list(all = false) {
     PATH = all ? STORIES_API : USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
+    //set filters if any remove set filters from session storage
+    filters = sessionStorage.getItem("filters")
+    if(filters){
+        sessionStorage.setItem("filters","")
+    }else{
+        filters=""
+    }
 
     $.ajax({
         type: "GET",
-        url: API_GATEWAY + PATH,
+        url: API_GATEWAY + PATH + filters,
         xhrFields: {withCredentials: true},
         crossDomain: true,
         dataType: "json",
         success: story_callback,
         error: function (errMsg) {
-            if(errMsg.status==401){
+            if (errMsg.status == 401) {
                 logout()
             }
             $("#story-list").append("<h1> No stories found </h1>")
@@ -138,6 +148,7 @@ function story_callback(data, status, xhr) {
             storycomponent.theme = story.theme
         }
         storycomponent.text = story.text
+        storycomponent.authorValue = sessionStorage.getItem("id")
         storycomponent.date = story.date
         storycomponent.author = 'author'
         storycomponent.authorId = story.author_id
@@ -174,7 +185,8 @@ function single_story_callback(data, status, xhr) {
     story.author = get_username(story.authorId)
     story.likes = body.likes
     story.dislikes = body.dislikes
-    story.currentUser = ''
+    story.currentUser = sessionStorage.getItem("id")
+    story.author = 'author'
     story.diceSet = body.dice_set
     story.onLikeCallback = like
     story.onDislikeCallback = dislike
@@ -198,14 +210,14 @@ function get_username(userid) {
 }
 
 function like(evt) {
-    react(evt.data.id, 'like')
+    react(evt.data.id, 'like', evt.data.story)
 }
 
 function dislike(evt) {
-    react(evt.data.id, 'dislike')
+    react(evt.data.id, 'dislike', evt.data.story)
 }
 
-function react(url, val) {
+function react(url, val, story) {
     let formData = new FormData()
     var payload = {}
     formData.append('react', val)
@@ -213,29 +225,39 @@ function react(url, val) {
         payload[key] = value
     });
     var json = JSON.stringify(payload)
-    url = API_GATEWAY + STORIES_API + '/' + storyId + REACT_API
-    fetch(url, {method: 'POST', body: json})
-        .then(response => {
-            code = response.status
-            response.json()
-        })
-        .then(data => {
+
+    $.ajax({
+        type: "POST",
+        url: API_GATEWAY + STORIES_API + '/' + storyId + REACT_API,
+        data: json,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: data => {
             if (val === 'like') {
                 story.likes++;
-                if (data.message === 'Reaction updated')
+                if (data.message==='Reaction updated')
                     story.dislikes--;
+                story.update()
             } else {
                 story.dislikes++;
-                if (data.message === 'Reaction updated')
+                if (data.message==='Reaction updated')
                     story.likes--;
+                story.update()
             }
             story.update()
-        })
-        .catch(msg => {
-            if (code != 400 && code != 404 && code != 403 && code != 410)
-                msg = 'An error occurred while processing your request. Please try again later.'
-            $('#message').text(msg)
-        })
+        },
+        error: function (errMsg) {
+            if (errMsg.JSONValue.status == 401) {
+                logout()
+            } else {
+                if (code != 400 && code != 404 && code != 403 && code != 410)
+                    msg = 'An error occurred while processing your request. Please try again later.'
+                $('#message').text(msg)
+            }
+        }
+    });
 }
 
 function get_users() {
@@ -248,7 +270,7 @@ function get_users() {
         success: users_callback,
         error: function (errMsg) {
             $("#users-list").append("<h1> No users found </h1>")
-            if(errMsg.status==401){
+            if (errMsg.status == 401) {
                 logout()
             }
         }
@@ -259,9 +281,85 @@ function users_callback(data, status, xhr) {
     data.forEach(user => {
         usercomponent = new UserComponent($('#users-list'), user['user_id'])
         usercomponent.username = user.username
+        usercomponent.followmode=false
         usercomponent.firstname = user.firstname
         usercomponent.lastname = user.lastname
         usercomponent.render()
+    });
+}
+
+function followed() {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + FOLLOWED_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: followed_callback,
+        error: function (errMsg) {
+            $("#users-list").append("<h1> No users found </h1>")
+            if (errMsg.status == 401) {
+                logout()
+            }
+        }
+    });
+}
+
+function followed_callback(data, status, xhr) {
+    data.forEach(user => {
+        usercomponent = new UserComponent($('#followed-list'), user.user_id)
+        usercomponent.followmode = true
+        usercomponent.username = user.username
+        usercomponent.firstname = user.firstname
+        usercomponent.lastname = user.lastname
+        usercomponent.render()
+    });
+}
+
+function unfollow(id){
+
+    FOLLOW_API = FOLLOW_API.replace("ID", id)
+
+    $.ajax({
+        type: "DELETE",
+        url: API_GATEWAY + FOLLOW_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function () {
+            alert("user unfollowed")
+            window.location.href=STORIES_API
+        },
+        error: function (errMsg) {
+            if (errMsg.status == 401) {
+                logout()
+            }
+        }
+    });
+}
+
+function follow(id){
+    FOLLOW_API = FOLLOW_API.replace("ID", id)
+
+    $.ajax({
+        type: "POST",
+        url: API_GATEWAY + FOLLOW_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function () {
+            alert("user followed")
+        },
+        error: function (errMsg) {
+            if (errMsg.status == 401) {
+                logout()
+            }
+            if (errMsg.status == 409) {
+                alert("user already followed")
+            }else {
+                alert(errMsg.JSONValue.message)
+            }
+        }
     });
 }
 
@@ -287,11 +385,11 @@ function users_stories_callback(data, status, xhr) {
             <h5><span id="user-name"></span>'s Wall</h5>
             <hr class="style1"> ` +
 
-        sessionStorage.getItem("id") == data['author_id'] ? `` : `
+        (sessionStorage.getItem("id") == data[0].author_id ? `` : `
             <a href="#" class="btn btn-secondary"
-                   onclick="TODO-ADD-FOLLOW">Follow author</a>
+                   onclick="follow(`+data[0].author_id+`)">Follow author</a>
                 <br><br>
-            `
+            `)
             + `
             
                <ul class="list-group"> <div class="row"><div class="col-md-12" id="story-list"></div></div></ul>
@@ -335,7 +433,7 @@ function roll_dice() {
         crossDomain: true,
         success: roll_dice_callback,
         error: function (errMsg) {
-            if(errMsg.status==200){
+            if (errMsg.status == 200) {
                 logout()
             }
             alert(errMsg.responseJSON.message)
@@ -390,7 +488,7 @@ function submit_story_request(is_draft, id) {
             window.location.href = STORIES_API
         },
         error: function (errMsg) {
-            if(errMsg.status==200){
+            if (errMsg.status == 200) {
                 logout()
             }
             alert(errMsg.responseJSON.message)
@@ -424,6 +522,29 @@ function story_edit_callback(data, status, xhr) {
     storycomponent.onCancelStoryCallback = delete_story
     storycomponent.render()
 
+}
+
+function calculate_statistics() {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STATISTICS_API + "/" + sessionStorage.getItem("id"),
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: statistics_callback,
+        error: function (errMsg) {
+            if (errMsg.status == 200) {
+                logout()
+            }
+        }
+    });
+}
+
+function statistics_callback(data, status, xhr) {
+    $("#avg-dice").text(data.avg_dice)
+    $("#num-dislikes").text(data.likes)
+    $("#num-likes").text(data.dislikes)
+    $("#num-stories").text(data.n_stories)
 }
 
 

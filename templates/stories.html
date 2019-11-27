@@ -28,7 +28,13 @@
 
             <h4>Followed users</h4>
 
-            <div class="list-group list-group-flush">
+            <div class="list-group list-group-flush" id="followed-list">
+
+                <script>
+                    followed()
+                </script>
+
+
                 {% for user in users %}
                 <div class="list-group-item d-flex justify-content-between align-items-center" id="user_{{ user.id }}">
                     <a class="text-dark btn" disabled="true"
@@ -71,48 +77,6 @@
 
 </div>
 
-<script>
-    function follow(user_id) {
-        fetch('/users/' + user_id + '/follow', {method: 'POST'})
-            .then(function (response) {
-                if (response.ok) {
-                    alert('Now following user ' + user_id)
-                    location.reload();
-                } else {
-                    console.log('Invalid follow request to user: ' + user_id)
-                }
-            });
-    }
-
-    function deleteStory(story_id) {
-        fetch('/stories/' + story_id, {method: 'DELETE'})
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message)
-                window.location.replace('/stories');
-            });
-    }
-</script>
-<script>
-    function unfollow(id) {
-        fetch('/users/' + id + '/follow', {method: 'DELETE'})
-            .then(function (response) {
-                if (response.ok) {
-                    let name = $('#user_' + id + ' a').text()
-                    let alert = `
-              <div class="alert alert-info alert-dismissible fade show" role="alert">
-                ${name} unfollowed
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>`
-                    $('#user_' + id).html(alert)
-                } else {
-                    console.log('invalid unfollow operation')
-                }
-            })
-    }
-</script>
 <script>
     $("#menu-toggle").click(function (e) {
         e.preventDefault();

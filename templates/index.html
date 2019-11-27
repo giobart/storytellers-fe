@@ -51,28 +51,20 @@
 
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Number of published stories
-                        <span class="badge badge-secondary badge-pill"></span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
                         Number of likes received
-                        <span class="badge badge-secondary badge-pill"></span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Avg likes per stories:
-                        <span class="badge badge-secondary badge-pill"></span>
+                        <span class="badge badge-secondary badge-pill" id="num-likes"></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Number of dislikes received
-                        <span class="badge badge-secondary badge-pill"></span>
+                        <span class="badge badge-secondary badge-pill" id="num-dislikes"></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Average of dice used
-                        <span class="badge badge-secondary badge-pill"></span>
+                        <span class="badge badge-secondary badge-pill" id="avg-dice"></span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Number of stories
-                        <span class="badge badge-secondary badge-pill"></span>
+                        <span class="badge badge-secondary badge-pill" id="num-stories"></span>
                     </li>
                 </ul>
 
@@ -89,6 +81,8 @@
     if(!username){
         window.location.href = '/login';
     }
+
+    calculate_statistics()
 
     function deleteStory(story_id) {
         fetch('/stories/' + story_id, {method: 'DELETE'})

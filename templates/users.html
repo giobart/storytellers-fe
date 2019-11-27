@@ -47,30 +47,6 @@
 
 <script>
 
-
-    function follow(user_id) {
-        fetch('/users/' + user_id + '/follow', {method: 'POST'})
-            .then(function (response) {
-                if (response.ok) {
-                    alert('Now following user ' + user_id)
-                    location.reload();
-                } else {
-                    console.log('Invalid follow request to user: ' + user_id)
-                }
-            });
-    }
-
-    function deleteStory(story_id) {
-        fetch('/stories/' + story_id, {method: 'DELETE'})
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message)
-                window.location.replace('/stories');
-            });
-    }
-</script>
-<script>
-
     username = sessionStorage.getItem("username")
     if (!username) {
         window.location.href = '/login';
@@ -78,7 +54,7 @@
 
     search_id = sessionStorage.getItem("search_id")
     if(search_id){
-        sessionStorage.setItem("search_id",null)
+        sessionStorage.setItem("search_id","")
         get_users_story_list(search_id)
     }
 

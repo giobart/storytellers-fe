@@ -132,11 +132,11 @@
             let input1 = document.getElementById("start");
             let input2 = document.getElementById("end");
             let search = document.getElementById("sid").value
-            let query = "/stories?"
+            let query = "?"
 
             //filter by name
             if (search) {
-                query += "&q=" + search
+                query += "&text=" + search
             }
 
             //filter date
@@ -152,14 +152,15 @@
                 query += "&theme=" + set_checked
             }
 
-            window.location.replace(query);
+            sessionStorage.setItem("filters",query)
+            window.location.href = "/stories"
         }
 
         function resetfilter() {
             document.getElementById("start").value=null
             document.getElementById("end").value=null
             document.getElementById("sid").value=null
-            removeSet()
+            window.location.href = "/stories"
         }
 
         <!-- Functions that get allow to get url parameters from the page-->

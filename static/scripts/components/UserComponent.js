@@ -1,9 +1,5 @@
 class UserComponent {
 
-    set onUnfollowCallback(callback) {
-        this.deleteStoryCallbackFunc = callback
-    }
-
     set username(username) {
         this.usernameValue = username;
     }
@@ -18,6 +14,14 @@ class UserComponent {
 
     get firstname() {
         return this.firstnameValue;
+    }
+
+    set followmode(followmode) {
+        this.followmodeValue = followmode;
+    }
+
+    get followmode() {
+        return this.followmodeValue;
     }
 
     set lastname(lastname) {
@@ -71,7 +75,13 @@ class UserComponent {
                     <div class="list-group-item d-flex justify-content-between align-items-center"
                          id="user_{{ usr.id }}">
                         <a class="text-dark btn" disabled="true"
-                           href="#" onclick="get_users_story_list(${this.idValue})">${this.usernameValue}</a>
+                           href="#" onclick="get_users_story_list(${this.idValue})">${this.usernameValue}</a> <br>` +
+
+            (this.followmode==true ? `<a type="button" class="btn badge badge-danger badge-pill bg-danger text-white"
+                       onclick="unfollow(${this.idValue})" href="#">
+                        Unfollow
+                    </a>` : ``)
+            + `
                         <!--
                             <button type="button" class="badge badge-dark badge-pill btn" data-toggle="modal"
                                     data-target="#user_{{ usr.id }}_last_story">
