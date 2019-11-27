@@ -238,10 +238,6 @@ function react(url, val) {
         })
 }
 
-function deleteCallback() {
-
-}
-
 function get_users() {
     $.ajax({
         type: "GET",
