@@ -7,6 +7,8 @@ STORIES_EDIT = "/stories/ID/edit"
 REACT_API = "/react"
 USERS_API = "/users"
 STATISTICS_API = "/stats"
+FOLLOWED_API = "/users/followed"
+FOLLOW_API = "/users/ID/follow"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -235,12 +237,12 @@ function react(url, val, story) {
         success: data => {
             if (val === 'like') {
                 story.likes++;
-                if (!$.isEmptyObject(data))
+                if (data.message==='Reaction updated')
                     story.dislikes--;
                 story.update()
             } else {
                 story.dislikes++;
-                if (!$.isEmptyObject(data))
+                if (data.message==='Reaction updated')
                     story.likes--;
                 story.update()
             }
@@ -279,9 +281,85 @@ function users_callback(data, status, xhr) {
     data.forEach(user => {
         usercomponent = new UserComponent($('#users-list'), user['user_id'])
         usercomponent.username = user.username
+        usercomponent.followmode=false
         usercomponent.firstname = user.firstname
         usercomponent.lastname = user.lastname
         usercomponent.render()
+    });
+}
+
+function followed() {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + FOLLOWED_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: followed_callback,
+        error: function (errMsg) {
+            $("#users-list").append("<h1> No users found </h1>")
+            if (errMsg.status == 401) {
+                logout()
+            }
+        }
+    });
+}
+
+function followed_callback(data, status, xhr) {
+    data.forEach(user => {
+        usercomponent = new UserComponent($('#followed-list'), user.user_id)
+        usercomponent.followmode = true
+        usercomponent.username = user.username
+        usercomponent.firstname = user.firstname
+        usercomponent.lastname = user.lastname
+        usercomponent.render()
+    });
+}
+
+function unfollow(id){
+
+    FOLLOW_API = FOLLOW_API.replace("ID", id)
+
+    $.ajax({
+        type: "DELETE",
+        url: API_GATEWAY + FOLLOW_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function () {
+            alert("user unfollowed")
+            window.location.href=STORIES_API
+        },
+        error: function (errMsg) {
+            if (errMsg.status == 401) {
+                logout()
+            }
+        }
+    });
+}
+
+function follow(id){
+    FOLLOW_API = FOLLOW_API.replace("ID", id)
+
+    $.ajax({
+        type: "POST",
+        url: API_GATEWAY + FOLLOW_API,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function () {
+            alert("user followed")
+        },
+        error: function (errMsg) {
+            if (errMsg.status == 401) {
+                logout()
+            }
+            if (errMsg.status == 409) {
+                alert("user already followed")
+            }else {
+                alert(errMsg.JSONValue.message)
+            }
+        }
     });
 }
 
@@ -307,11 +385,11 @@ function users_stories_callback(data, status, xhr) {
             <h5><span id="user-name"></span>'s Wall</h5>
             <hr class="style1"> ` +
 
-        sessionStorage.getItem("id") == data['author_id'] ? `` : `
+        (sessionStorage.getItem("id") == data[0].author_id ? `` : `
             <a href="#" class="btn btn-secondary"
-                   onclick="TODO-ADD-FOLLOW">Follow author</a>
+                   onclick="follow(`+data[0].author_id+`)">Follow author</a>
                 <br><br>
-            `
+            `)
             + `
             
                <ul class="list-group"> <div class="row"><div class="col-md-12" id="story-list"></div></div></ul>
