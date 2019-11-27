@@ -112,10 +112,17 @@ function logout() {
 function story_list(all = false) {
     PATH = all ? STORIES_API : USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
+    //set filters if any remove set filters from session storage
+    filters = sessionStorage.getItem("filters")
+    if(filters){
+        sessionStorage.setItem("filters","")
+    }else{
+        filters=""
+    }
 
     $.ajax({
         type: "GET",
-        url: API_GATEWAY + PATH,
+        url: API_GATEWAY + PATH + filters,
         xhrFields: {withCredentials: true},
         crossDomain: true,
         dataType: "json",
