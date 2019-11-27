@@ -1,53 +1,67 @@
 <html>
 <head>
-    {% include 'html_components/bootstrap.html' %}
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <script src="/static/scripts/requests.js"></script>
 </head>
 <body>
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block title %}
-    Login
-{% endblock %}
-{% block content %}
-    {{ super() }}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card card-signin my-5">
-                    <div class="card-body">
-
-                        <h1>Sign up</h1>
-                        <br>
-                        <form action="" method="POST">
-                            {{ form.hidden_tag() }}
-                            <dl>
-                                {% for field in form.display %}
-                                    <dt>{{ form[field].label }}</dt>
-                                    <dd>{{ form[field]() }}</dd>
-                                    {% if form[field].errors %}
-                                        {% for e in form[field].errors %}
-                                            <p class="help-block">{{ e }}</p>
-                                        {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
-                            </dl>
-                            <p>
-                                <input class="btn btn-primary" type=submit value="Login">
-                        </form>
-
-                        <span class="txt1 p-b-9">
-                    Don’t have an account?
-                </span>
-                        <a class="txt3" href="/signup">
-                            Sign up now
-                        </a>
-                    </div>
-                </div>
+<div class="container">
+    <br><br><br>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="credentialError">
+        <strong>Wrong Credentials</strong> Try Again.
+    </div>
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card">
+                <article class="card-body">
+                    <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
+                    <hr>
+                    <form action="javascript:void(0);">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                </div>
+                                <input name="" class="form-control" id="username" placeholder="Username"
+                                       type="username">
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                </div>
+                                <input class="form-control" id="password" placeholder="******" type="password">
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" onclick="login()"> Login</button>
+                        </div> <!-- form-group// -->
+                        <p class="text-center">
+                            <span class="txt1 p-b-9">
+                                 Don’t have an account?
+                            </span>
+                            <a class="txt3" href="/signup">
+                                Sign up now
+                            </a>
+                        </p>
+                    </form>
+                </article>
             </div>
         </div>
     </div>
-{% endblock %}
+
+</div>
+
+<script>
+    $("#credentialError").hide()
+</script>
 </body>
 </html>
 

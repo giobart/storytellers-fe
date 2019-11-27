@@ -27,60 +27,27 @@
 
             <h4>Users</h4>
 
-            <div class="list-group list-group-flush">
-                {% for usr in result %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center"
-                         id="user_{{ usr.id }}">
-                        <a class="text-dark btn" disabled="true"
-                           href="/users/{{ usr.id }}">{{ usr.username }}</a>
-                        {% if usr[1]: %}
-                            <button type="button" class="badge badge-dark badge-pill btn" data-toggle="modal"
-                                    data-target="#user_{{ usr.id }}_last_story">
-                                Last Story
-                            </button>
-                        {% endif %}
-                    </div>
-
-                    <!-- user last story -->
-                    {% if usr[1]: %}
-
-                        <div class="modal fade" id="user_{{ usr.id }}_last_story" tabindex="-1" role="dialog"
-                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLongTitle">Last story
-                                            from {{ usr.username }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        {{ usr[1] }} <br> <br>
-                                        Published: <i>{{ usr[2].day }}/{{ usr[2].month }}/{{ usr[2].year }}</i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-
-                {% endfor %}
+            <div class="list-group list-group-flush" id="users-list">
+                <script>
+                    get_users()
+                </script>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
 
-        <h5>{{ message }}</h5>
+        <div class="container text-center justify-content-center align-items-center h-100" id="user-wall">
+             <div class="col-md-12" id="story-list">
 
-        <div class="container text-center justify-content-center align-items-center h-100" id="page-content-wrapper">
-
-                        <h3 class="display-5" style="margin-top: 4rem">Select one user to see the wall or just read the last story</h3>
+            <h3 class="display-5" style="margin-top: 4rem">Select one user to see the wall or just read the last
+                story</h3>
 
         </div>
     </div>
 </div>
 
 <script>
+
+
     function follow(user_id) {
         fetch('/users/' + user_id + '/follow', {method: 'POST'})
             .then(function (response) {
@@ -103,6 +70,18 @@
     }
 </script>
 <script>
+
+    username = sessionStorage.getItem("username")
+    if (!username) {
+        window.location.href = '/login';
+    }
+
+    search_id = sessionStorage.getItem("search_id")
+    if(search_id){
+        sessionStorage.setItem("search_id",null)
+        get_users_story_list(search_id)
+    }
+
     $("#menu-toggle").click(function (e) {
         e.preventDefault();
         $("#wrapper").toggleClass("toggled");

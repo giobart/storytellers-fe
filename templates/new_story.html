@@ -6,8 +6,6 @@
 </head>
 <body>
 
-{% if current_user.is_authenticated %}
-
     <!--Navigation bar-->
     {% include 'html_components/nav.html' %}
     <!--end of Navigation bar-->
@@ -21,25 +19,25 @@
             <div class="row">
                 <div class="col">
 
-                    <form action="/roll_dice" method="GET" role="form">
+                    <form  action="javascript:void(0);">
 
                         <label for="validationTooltip01">How many dice you want to roll?</label>
                         <div class="form-group">
                             <div class="btn-group" data-toggle="buttons">
 
-                                <label class="btn btn-secondary active">
+                                <label class="btn btn-secondary active" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="4"
                                            style="visibility:hidden;" checked> 4
                                 </label>
 
 
-                                <label class="btn btn-secondary">
+                                <label class="btn btn-secondary" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="5"
                                            style="visibility:hidden;"> 5
                                 </label>
 
 
-                                <label class="btn btn-secondary">
+                                <label class="btn btn-secondary" id="dicenum">
                                     <input type="radio" name="dicenum" id="dicenum" autocomplete="off" value="6"
                                            style="visibility:hidden;"> 6
                                 </label>
@@ -49,34 +47,46 @@
                         <label for="validationTooltip02">Choose Dice Set</label>
                         <div class="form-group">
                             <div class="btn-group" data-toggle="buttons">
-                                {% for set in diceset %}
-                                    <label class="btn btn-dark text-white">
-                                        <input type="radio" name="diceset" id="dicenum" autocomplete="off"
-                                               value="{{ set }}"
+                                    <label class="btn btn-dark text-white" id="dicetheme">
+                                        <input type="radio" name="diceset"  autocomplete="off"
+                                               value="standard"
                                                style="visibility:hidden;" checked>
-                                        {{ set }}
-                                        <img src="static/img/{{ set }}.png" style="height: 2em;width: 2em;">
+                                        standard
+                                        <img src="static/img/standard.png" style="height: 2em;width: 2em;">
                                     </label>
-
-                                {% endfor %}
-
+                                    <label class="btn btn-dark text-white"  id="dicetheme" >
+                                        <input type="radio" name="diceset" autocomplete="off"
+                                               value="halloween"
+                                               style="visibility:hidden;" checked>
+                                        halloween
+                                        <img src="static/img/halloween.png" style="height: 2em;width: 2em;">
+                                    </label>
+                                    <label class="btn btn-dark text-white" id="dicetheme">
+                                        <input type="radio" name="diceset" autocomplete="off"
+                                               value="xmas"
+                                               style="visibility:hidden;" checked>
+                                        xmas
+                                        <img src="static/img/xmas.png" style="height: 2em;width: 2em;">
+                                    </label>
                             </div>
                         </div>
                         <br>
-                        <button type="submit" class="btn btn-success">Roll the dice</button>
-                    </form>
+                        <button class="btn btn-success" onclick="roll_dice()">Roll the dice</button>
+                    </form >
                 </div>
             </div>
         </div>
     </div>
-
-
-
-{% else %}
-    Hi Anonymous, <a href="/login">Log in</a>
-{% endif %}
-
 </div>
+
+<script>
+
+    username = sessionStorage.getItem("username")
+    if (!username) {
+        window.location.href = '/login';
+    }
+
+</script>
 
 
 </body>

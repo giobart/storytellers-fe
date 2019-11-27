@@ -1,8 +1,13 @@
+import os
+import views
+
 from flask import Flask
+#from flask_bootstrap import Bootstrap
 
 
 def create_app():
     app = Flask(__name__)
+    #bootstrap = Bootstrap(app)
 
     # Registration of the error handlers
     from views import errors
@@ -23,4 +28,4 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    app.run()
+    app.run(host='0.0.0.0', port=8080)
