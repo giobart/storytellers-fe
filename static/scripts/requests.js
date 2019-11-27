@@ -6,6 +6,7 @@ STORIES_API = "/stories"
 STORIES_EDIT = "/stories/ID/edit"
 REACT_API = "/react"
 USERS_API = "/users"
+STATISTICS_API = "/stats"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
 
@@ -436,6 +437,29 @@ function story_edit_callback(data, status, xhr) {
     storycomponent.onCancelStoryCallback = delete_story
     storycomponent.render()
 
+}
+
+function calculate_statistics() {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STATISTICS_API + "/" + sessionStorage.getItem("id"),
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: statistics_callback,
+        error: function (errMsg) {
+            if (errMsg.status == 200) {
+                logout()
+            }
+        }
+    });
+}
+
+function statistics_callback(data, status, xhr) {
+    $("#avg-dice").text(data.avg_dice)
+    $("#num-dislikes").text(data.likes)
+    $("#num-likes").text(data.dislikes)
+    $("#num-stories").text(data.n_stories)
 }
 
 
