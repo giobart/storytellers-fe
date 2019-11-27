@@ -108,7 +108,7 @@ function logout() {
 }
 
 
-function story_list(all=false) {
+function story_list(all = false) {
     PATH = all ? STORIES_API : USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
 
 
@@ -120,7 +120,7 @@ function story_list(all=false) {
         dataType: "json",
         success: story_callback,
         error: function (errMsg) {
-            if(errMsg.status==401){
+            if (errMsg.status == 401) {
                 logout()
             }
             $("#story-list").append("<h1> No stories found </h1>")
@@ -138,6 +138,7 @@ function story_callback(data, status, xhr) {
             storycomponent.theme = story.theme
         }
         storycomponent.text = story.text
+        storycomponent.authorValue = sessionStorage.getItem("id")
         storycomponent.date = story.date
         storycomponent.author = 'author'
         storycomponent.authorId = story.author_id
@@ -174,7 +175,8 @@ function single_story_callback(data, status, xhr) {
     story.author = get_username(story.authorId)
     story.likes = body.likes
     story.dislikes = body.dislikes
-    story.currentUser = ''
+    story.currentUser = sessionStorage.getItem("id")
+    story.author = 'author'
     story.diceSet = body.dice_set
     story.onLikeCallback = like
     story.onDislikeCallback = dislike
@@ -198,14 +200,14 @@ function get_username(userid) {
 }
 
 function like(evt) {
-    react(evt.data.id, 'like')
+    react(evt.data.id, 'like', evt.data.story)
 }
 
 function dislike(evt) {
-    react(evt.data.id, 'dislike')
+    react(evt.data.id, 'dislike', evt.data.story)
 }
 
-function react(url, val) {
+function react(url, val, story) {
     let formData = new FormData()
     var payload = {}
     formData.append('react', val)
@@ -213,29 +215,39 @@ function react(url, val) {
         payload[key] = value
     });
     var json = JSON.stringify(payload)
-    url = API_GATEWAY + STORIES_API + '/' + storyId + REACT_API
-    fetch(url, {method: 'POST', body: json})
-        .then(response => {
-            code = response.status
-            response.json()
-        })
-        .then(data => {
+
+    $.ajax({
+        type: "POST",
+        url: API_GATEWAY + STORIES_API + '/' + storyId + REACT_API,
+        data: json,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: data => {
             if (val === 'like') {
                 story.likes++;
-                if (data.message === 'Reaction updated')
+                if (!$.isEmptyObject(data))
                     story.dislikes--;
+                story.update()
             } else {
                 story.dislikes++;
-                if (data.message === 'Reaction updated')
+                if (!$.isEmptyObject(data))
                     story.likes--;
+                story.update()
             }
             story.update()
-        })
-        .catch(msg => {
-            if (code != 400 && code != 404 && code != 403 && code != 410)
-                msg = 'An error occurred while processing your request. Please try again later.'
-            $('#message').text(msg)
-        })
+        },
+        error: function (errMsg) {
+            if (errMsg.JSONValue.status == 401) {
+                logout()
+            } else {
+                if (code != 400 && code != 404 && code != 403 && code != 410)
+                    msg = 'An error occurred while processing your request. Please try again later.'
+                $('#message').text(msg)
+            }
+        }
+    });
 }
 
 function get_users() {
@@ -248,7 +260,7 @@ function get_users() {
         success: users_callback,
         error: function (errMsg) {
             $("#users-list").append("<h1> No users found </h1>")
-            if(errMsg.status==401){
+            if (errMsg.status == 401) {
                 logout()
             }
         }
@@ -335,7 +347,7 @@ function roll_dice() {
         crossDomain: true,
         success: roll_dice_callback,
         error: function (errMsg) {
-            if(errMsg.status==200){
+            if (errMsg.status == 200) {
                 logout()
             }
             alert(errMsg.responseJSON.message)
@@ -390,7 +402,7 @@ function submit_story_request(is_draft, id) {
             window.location.href = STORIES_API
         },
         error: function (errMsg) {
-            if(errMsg.status==200){
+            if (errMsg.status == 200) {
                 logout()
             }
             alert(errMsg.responseJSON.message)

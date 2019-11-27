@@ -132,7 +132,7 @@ class StoryComponent {
                   story</a>
   
               <!-- DELETE BUTTON IF CURRENT USER IS THE CREATOR OF THE STORY-->
-              ${this.currentUserValue == this.authorIdValue ? `<a class="btn btn-danger" id="delete-button-story-${this.idValue}">Delete</a> ` : ''}
+              ${this.authorValue == this.authorIdValue ? `<a class="btn btn-danger" id="delete-button-story-${this.idValue}">Delete</a> ` : ''}
               <!-- if draft theme put draft badge -->
               ${this.themeValue == 'draft' ? `<a class="btn btn-warning" href='/stories/${this.idValue}/edit'>Edit</a>\n` : ''}
   
