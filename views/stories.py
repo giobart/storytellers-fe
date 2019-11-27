@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint, render_template
 
 stories = Blueprint('stories', __name__)
@@ -16,9 +15,9 @@ def stories_list():
 
 @stories.route('/stories/<storyid>')
 def show_story(storyid):
-    return render_template('story.html', data=json.dumps(storyid))
+    return render_template('story.html')
 
 
 @stories.route('/stories/<storyid>/edit')
 def edit_story(storyid):
-    return render_template('edit_story.html', data=json.dumps(storyid))
+    return render_template('edit_story.html')

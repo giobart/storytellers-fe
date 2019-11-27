@@ -35,9 +35,8 @@
         </div>
         <!-- /#sidebar-wrapper -->
 
-        <h5>{{ message }}</h5>
-
         <div class="container text-center justify-content-center align-items-center h-100" id="user-wall">
+             <div class="col-md-12" id="story-list">
 
             <h3 class="display-5" style="margin-top: 4rem">Select one user to see the wall or just read the last
                 story</h3>
@@ -79,6 +78,7 @@
 
     search_id = sessionStorage.getItem("search_id")
     if(search_id){
+        sessionStorage.setItem("search_id",null)
         get_users_story_list(search_id)
     }
 

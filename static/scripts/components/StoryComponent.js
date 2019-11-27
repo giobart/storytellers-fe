@@ -79,12 +79,21 @@ class StoryComponent {
 
     render() {
         this.container.append(this.markup());
-        $('#delete-button-story-' + this.idValue).click({param1: this.idValue}, this.deleteStoryCallbackFunc)
+        $('#delete-button-story-' + this.idValue).click({id: this.idValue}, this.deleteStoryCallbackFunc)
+        $('#author-link-' + this.idValue).click({id: this.authorIdValue}, evt => {
+            sessionStorage.setItem("search_id", evt.data.id);
+            window.location.href = USERS_API
+        })
     }
 
     update() {
         $('#story-id-' + this.idValue).replaceWith(this.markup());
-        $('#delete-button-story-' + this.idValue).click({param1: this.idValue}, this.deleteStoryCallbackFunc)
+        $('#delete-button-story-' + this.idValue).click({id: this.idValue}, this.deleteStoryCallbackFunc)
+        $('#author-link-' + this.idValue).click({id: this.authorIdValue}, evt => {
+            sessionStorage.setItem("search_id", evt.data.id);
+            window.location.href = USERS_API
+        })
+
     }
 
     constructor(container, id) {
@@ -108,7 +117,7 @@ class StoryComponent {
               </h5>
               <span style="margin-right: 1rem;">
                   Published: <i>${this.dateValue}</i>
-                  | by: <a href="/users/${this.authorIdValue} " class="btn badge badge-pill badge-dark"> ${this.authorValue} </a>
+                  | <a id="author-link-${this.idValue}" class="btn badge badge-pill badge-dark"> ${this.authorValue} </a>
               </span>
               </p >
   
@@ -123,7 +132,7 @@ class StoryComponent {
                   story</a>
   
               <!-- DELETE BUTTON IF CURRENT USER IS THE CREATOR OF THE STORY-->
-              ${this.currentUserValue == this.authorValue ? `<a class="btn btn-danger" id="delete-button-story-${this.idValue}">Delete</a> ` : ''}
+              ${this.currentUserValue == this.authorIdValue ? `<a class="btn btn-danger" id="delete-button-story-${this.idValue}">Delete</a> ` : ''}
               <!-- if draft theme put draft badge -->
               ${this.themeValue == 'draft' ? `<a class="btn btn-warning" href='/stories/${this.idValue}/edit'>Edit</a>\n` : ''}
   

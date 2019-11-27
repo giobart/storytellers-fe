@@ -19,7 +19,8 @@
 
         code = 0
 
-        storyId = parseInt({{ data | tojson }});
+        story_id = window.location.href.substring(window.location.href.lastIndexOf("/")+1)
+        storyId = parseInt(story_id);
         
         story_render(storyId)
 

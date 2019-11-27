@@ -3,11 +3,11 @@ LOGIN_API = "/login"
 SIGNUP_API = "/signup"
 LOGOUT_API = "/logout"
 STORIES_API = "/stories"
+STORIES_EDIT = "/stories/ID/edit"
 REACT_API = "/react"
 USERS_API = "/users"
 USER_STORY_LIST = "/users/id/stories"
 FRONT_END = "http://localhost:5000"
-PUT_STORY_LINK = ""
 
 function login() {
     user = {
@@ -108,17 +108,21 @@ function logout() {
 }
 
 
-function story_list() {
-    USER_STORY_LIST=USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
+function story_list(all=false) {
+    PATH = all ? STORIES_API : USER_STORY_LIST.replace("id", sessionStorage.getItem("id"));
+
 
     $.ajax({
         type: "GET",
-        url: API_GATEWAY + USER_STORY_LIST,
+        url: API_GATEWAY + PATH,
         xhrFields: {withCredentials: true},
         crossDomain: true,
         dataType: "json",
         success: story_callback,
         error: function (errMsg) {
+            if(errMsg.status==401){
+                logout()
+            }
             $("#story-list").append("<h1> No stories found </h1>")
         }
     });
@@ -128,16 +132,20 @@ function story_callback(data, status, xhr) {
 
     data.forEach(story => {
         storycomponent = new StoryComponent($('#story-list'), story.id)
-        storycomponent.theme = story.theme
+        if (story.is_draft) {
+            storycomponent.theme = "draft"
+        } else {
+            storycomponent.theme = story.theme
+        }
         storycomponent.text = story.text
         storycomponent.date = story.date
-        storycomponent.author = 'giobarty'
+        storycomponent.author = 'author'
         storycomponent.authorId = story.author_id
         storycomponent.likes = story.likes
         storycomponent.dislikes = story.dislikes
-        storycomponent.currentUser = 'author'
-        storycomponent.onDeleteStoryCallback = function () {
-        }
+        storycomponent.currentUser = sessionStorage.getItem("id")
+        storycomponent.onDeleteStoryCallback = delete_story
+        storycomponent.render()
     });
 
 }
@@ -146,6 +154,7 @@ function story_render(storyid) {
     $.ajax({
         type: "GET",
         url: API_GATEWAY + STORIES_API + '/' + storyid,
+        xhrFields: {withCredentials: true},
         crossDomain: true,
         success: single_story_callback,
         error: function (errMsg) {
@@ -156,7 +165,7 @@ function story_render(storyid) {
 
 function single_story_callback(data, status, xhr) {
 
-    body = $.parseJSON(data)
+    body = data
     story = new BigStoryComponent($('#story-container'), storyId)
     story.theme = body.theme
     story.text = body.text
@@ -166,7 +175,7 @@ function single_story_callback(data, status, xhr) {
     story.likes = body.likes
     story.dislikes = body.dislikes
     story.currentUser = ''
-    story.diceSet= body.dice_set
+    story.diceSet = body.dice_set
     story.onLikeCallback = like
     story.onDislikeCallback = dislike
     story.render()
@@ -189,12 +198,11 @@ function get_username(userid) {
 }
 
 function like(evt) {
-    //react(storyId, 'like')
-    react(evt.data.param1, 'like')
+    react(evt.data.id, 'like')
 }
 
 function dislike(evt) {
-    react(evt.data.param1, 'dislike')
+    react(evt.data.id, 'dislike')
 }
 
 function react(url, val) {
@@ -244,6 +252,9 @@ function get_users() {
         success: users_callback,
         error: function (errMsg) {
             $("#users-list").append("<h1> No users found </h1>")
+            if(errMsg.status==401){
+                logout()
+            }
         }
     });
 }
@@ -264,7 +275,7 @@ function get_users_story_list(id) {
         url: API_GATEWAY + STORIES_API + "?user_id=" + id,
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: story_callback,
+        success: users_stories_callback,
         error: function (errMsg) {
             $("#user-wall").html("<h3 class='display-5' style='margin-top: 4rem'> No stories published yet </h3>")
         }
@@ -286,16 +297,14 @@ function users_stories_callback(data, status, xhr) {
                 <br><br>
             `
             + `
-            <ul class="list-group">
-                <div class="row" id="story-list"></div>
-            </ul>
+            
+               <ul class="list-group"> <div class="row"><div class="col-md-12" id="story-list"></div></div></ul>
+            
         </div>
          `
     )
-    get_username(id)
+    get_username(data['author_id'])
     story_callback(data, status, xhr)
-
-
 }
 
 function get_username(id) {
@@ -315,11 +324,10 @@ function get_username(id) {
 }
 
 
-
 function roll_dice() {
     dice = {
         dicenum: parseInt($(".active#dicenum").text().trim()),
-        diceset: $(".active#dicetheme").text().trim()
+        theme: $(".active#dicetheme").text().trim()
     }
     $.ajax({
         type: "POST",
@@ -331,47 +339,96 @@ function roll_dice() {
         crossDomain: true,
         success: roll_dice_callback,
         error: function (errMsg) {
-            $("#message").show()
+            if(errMsg.status==200){
+                logout()
+            }
+            alert(errMsg.responseJSON.message)
         }
     });
 }
 
 function roll_dice_callback(data, status, xhr) {
-    body = $.parseJSON(data)
-    PUT_STORY_LINK = body.story
-    params = link.split('/')
-    storyId = params[params.length-1]
-    story = new BigStoryComponent($('#edit-story-container'), storyId)
+    STORIES_EDIT = STORIES_EDIT.replace("ID", data.story_id)
+    window.location.href = STORIES_EDIT
 }
 
-function cancel_draft() {
-    window.location.replace(API_GATEWAY + STORIES_API)
+function submit_story(evt) {
+    submit_story_request(is_draft = "False", id = evt.data.id)
 }
 
-function submit() {
-    submit_story(0)
+function submit_draft(evt) {
+    submit_story_request(is_draft = "True", id = evt.data.id)
 }
 
-function submit_draft() {
-    submit_story(1)
+function delete_story(evt) {
+    $.ajax({
+        type: "DELETE",
+        url: API_GATEWAY + STORIES_API + "/" + evt.data.id,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: function () {
+            window.location.href = '/'
+        },
+        error: function (errMsg) {
+            logout();
+        }
+    });
 }
 
-function submit_story(is_draft) {
+function submit_story_request(is_draft, id) {
     story = {
-        text: $("#textarea"),
+        text: $('#story-text').val(),
         draft: is_draft
     }
+
     $.ajax({
         type: "PUT",
         data: JSON.stringify(story),
-        url: PUT_STORY_LINK,
+        url: API_GATEWAY + STORIES_API + "/" + id,
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         xhrFields: {withCredentials: true},
         crossDomain: true,
-        success: () => {window.location.replace(API_GATEWAY + STORIES_API)},
+        success: () => {
+            window.location.href = STORIES_API
+        },
         error: function (errMsg) {
-            $("#message").show()
+            if(errMsg.status==200){
+                logout()
+            }
+            alert(errMsg.responseJSON.message)
         }
     });
 }
+
+function story_edit_render(id) {
+    $.ajax({
+        type: "GET",
+        url: API_GATEWAY + STORIES_API + "/" + id,
+        xhrFields: {withCredentials: true},
+        crossDomain: true,
+        dataType: "json",
+        success: story_edit_callback,
+        error: function (errMsg) {
+            $("#story-list").append("<h1> No stories found </h1>")
+            logout()
+        }
+    });
+}
+
+function story_edit_callback(data, status, xhr) {
+
+    storycomponent = new EditStoryComponent($('#story-edit-container'), data.id)
+    storycomponent.theme = data.theme
+    storycomponent.diceSet = data.dice_set
+    storycomponent.text = data.text
+    storycomponent.onSubmitCallback = submit_story
+    storycomponent.onSubmitDraftCallback = submit_draft
+    storycomponent.onCancelStoryCallback = delete_story
+    storycomponent.render()
+
+}
+
+
+

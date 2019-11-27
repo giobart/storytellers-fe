@@ -14,95 +14,39 @@
 <body>
 
 <!-- ----------------- NAV BAR ------------------ -->
-{% if current_user.is_authenticated %}
+{% include 'html_components/nav.html' %}
 
-    {% include 'html_components/nav.html' %}
-
-    {% if story.theme == 'xmas' %}
-        <div class="bg-image xmas"></div>
-    {% elif story.theme == 'halloween' %}
-        <div class="bg-image halloween"></div>
-    {% elif story.theme == 'standard' %}
-        <div class="bg-image standard"></div>
-    {% endif %}
-
-    <div class="container d-flex flex-wrap align-items-center bg-text" name="edit-story-container">
-        <div class="jumbotron w-100 transparent-bg">
-
-            <form action="/stories/{{ story_id }}/edit" method="POST" role="form" name="storyform">
-
-                <div class="row">
-                    <div class="col-sm-12 center-block text-center">
-                        <h5>Current dice values </h5>
-                        <hr class="style2">
-                    </div>
-                </div>
-                <div class="row">
-                    {% for die in dice %}
-                        <div class="col">
-                            <div class="card card-block d-flex text-white bg-transparent border border-light mb-3"
-                                 style="width: 8rem; height: 8rem;">
-                                <div class="card-body align-items-center d-flex justify-content-center">
-                                    <h5 class="card-title ">{{ die }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    <div class="col-sm-12 center-block text-center">
-                        <textarea class=input name="textarea"></textarea>>
-
-                        <button type="button" id="validate" class="btn btn-success" onclick="submit()">Submit Story</button>
-                        <button type="button" id="draft" class="btn btn-primary" onclick="submit_draft()">Submit Draft Story</button>
-                        <button type="button" id="cancel" class="btn btn-danger" onclick="cancel_draft()">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    </div>
-
-
-
-{% else %}
-    Hi Anonymous, <a href="/login">Log in</a>
-{% endif %}
+<div id="story-edit-container">
+    <script>
+        var temploc = window.location.href.substring(0, window.location.href.lastIndexOf("/"))
+        storyId = parseInt(temploc.substring(temploc.lastIndexOf('/') + 1));
+        story_edit_render(storyId)
+    </script>
+</div>
 
 </div>
 
 
 <script>
+
+    username = sessionStorage.getItem("username")
+    if (!username) {
+        window.location.href = '/login';
+    }
+
     let manual_unload = false
-    let storyform = document.querySelector('form')
 
-    document.querySelector('#validate').addEventListener('click', evt => {
-        manual_unload = true
-        storyform.is_draft.checked = false
-        storyform.submit()
-    })
-    document.querySelector('#draft').addEventListener('click', evt => {
-        manual_unload = true
-        storyform.is_draft.checked = true
-        storyform.submit()
-    })
-    document.querySelector('#cancel').addEventListener('click', evt => {
-        manual_unload = true
-        fetch("{{ url_for('stories._deleteStory', storyid=story_id) }}", {method: 'DELETE'})
-            .then(response => {
-                window.location = "{{ url_for('stories._stories') }}"
-            })
-    })
-    window.addEventListener('beforeunload', evt => {
-        console.log('event ' + manual_unload)
-        if (manual_unload) {
-            return false
-        }
+    //window.addEventListener('beforeunload', evt => {
+        //console.log('event ' + manual_unload)
+        //if (manual_unload) {
+        //    return false
+        //}
 
-        evt.preventDefault()
-        console.log('beforeunload')
-        fetch("{{ url_for('stories._deleteStory', storyid=story_id) }}", {method: 'DELETE'})
-        return true
-    });
+        //evt.preventDefault()
+        //console.log('beforeunload')
+        //fetch("", {method: 'DELETE'})
+        //return true
+    //});
 </script>
 
 </body>

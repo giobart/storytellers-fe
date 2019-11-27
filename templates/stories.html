@@ -52,72 +52,13 @@
                     <div class="col-md-12" id="story-list">
                         <script>
 
-                            story_list()
+                            story_list(true)
 
-                            deleteCallback = a => console.log(a.data.param1)
-                            story = new StoryComponent($('#story-list'), 1)
-                            story.theme = 'halloween'
-                            story.text = 'hello world'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-
-                            deleteCallback = a => console.log(a.data.param1)
-                            story = new StoryComponent($('#story-list'), 1)
-                            story.theme = 'standard'
-                            story.text = 'hello world'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-
-                            deleteCallback = a => console.log(a.data.param1)
-                            story = new StoryComponent($('#story-list'), 1)
-                            story.theme = 'xmas'
-                            story.text = 'hello world'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
-
-                            deleteCallback = a => console.log(a.data.param1)
-                            story = new StoryComponent($('#story-list'), 1)
-                            story.theme = 'halloween'
-                            story.text = 'hello world'
-                            story.date = '25/08/1996'
-                            story.author = 'giobarty'
-                            story.authorId = 1
-                            story.likes = 5
-                            story.dislikes = 100
-                            story.currentUser = 'giobarty'
-                            story.onDeleteStoryCallback = deleteCallback
-                            story.render()
                         </script>
                     </div>
 
                     <div class="container text-center justify-content-center align-items-center h-100"
                          id="page-content-wrapper">
-
-                        <h3 class="display-5" style="margin-top: 4rem">
-                            {% if message is defined and message!="" %}
-                            {{ message }}
-                            {% else %}
-                            Nothing found
-                            {% endif %}
-                        </h3>
 
                     </div>
 
